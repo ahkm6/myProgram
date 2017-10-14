@@ -24,538 +24,529 @@ public class MakeObject {
 	final static int bidNumber = Main.bidNumber;
 	static int Value = Main.Value;
 
-	public void makeBid(Agent[] agent, ArrayList<Task> task, ArrayList<ArrayList<Bid>> bid, ArrayList<ArrayList<Bid>> agentBid, Random random) {
+	public void makeBid(Agent[] agent, ArrayList<Task> task, ArrayList<ArrayList<Bid>> bid,
+			ArrayList<ArrayList<Bid>> agentBid, Random random) {
 		for (int i = 0; i < agent.length; i++) {
 			if (agent[i].status > 0)
 				continue;
 			int value[] = new int[bidNumber];
 			int count = 0;
 			ArrayList<Bid> forA = new ArrayList<Bid>();
-			switch (agent[i].agentStrategy()){
+			switch (agent[i].agentStrategy()) {
 			case EDF:
-				for(int v = 0; v < value.length; v++){
+				for (int v = 0; v < value.length; v++) {
 					value[v] = 100;
 				}
 				for (Task t : task) {
 					int maxmin[] = calculate(agent[i].resource(), t.resource());
 					if (maxmin[0] > t.deadline())
 						continue;
-					if(t.deadline() < value[0]){
-						System.out.println(t.taskNumber() + ",," +-maxmin[0] + "," + t.deadline());
-						for(Bid b : forA){
-							System.out.println(b.toString());
-						}
-						System.out.println();
-						for(int j = 1; j < value.length ; j++){
-							if(t.deadline() > value[j]){
-								for(int k = 0; k < j-1; k++){
-									value[k] = value[k+1];
+					if (t.deadline() < value[0]) {
+						for (int j = 1; j < value.length; j++) {
+							if (t.deadline() > value[j]) {
+								for (int k = 0; k < j - 1; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j-1]=t.deadline();
-								forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								value[j - 1] = t.deadline();
+								forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 								break;
 							}
-							if(t.deadline() == value[j]){
-								if(Value == REWARD){
+							if (t.deadline() == value[j]) {
+								if (Value == REWARD) {
 
-									if(t.reward() > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+									if (t.reward() > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=t.deadline();
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = t.deadline();
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(t.reward()==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=t.deadline();
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = t.deadline();
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=t.deadline();
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = t.deadline();
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
-								if(Value == PROCESSTIME){
-									if(-maxmin[0] > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+								if (Value == PROCESSTIME) {
+									if (-maxmin[0] > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=t.deadline();
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = t.deadline();
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(-maxmin[0]==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=t.deadline();
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = t.deadline();
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=t.deadline();
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = t.deadline();
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
 								break;
 							}
-							if(j == value.length-1){
-								for(int k = 0; k < 4; k++){
-									value[k] = value[k+1];
+							if (j == value.length - 1) {
+								for (int k = 0; k < 4; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j]=t.deadline();
-								forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+								value[j] = t.deadline();
+								forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 							}
 						}
 					}
 				}
-				for(int l = bidNumber-2; l >= bidNumber-forA.size(); l--){
-					if(value[l] == value[l+1])
-						forA.get(l).prefPlus(count);
-					else{
+				for (int l = 1; l < forA.size(); l++) {
+					if (forA.get(l).deadline() == forA.get(l - 1).reward()) {
+						if (forA.get(l).value() == forA.get(l - 1).value())
+							forA.get(l).prefPlus(count);
+						else {
+							count++;
+							forA.get(l).prefPlus(count);
+						}
+					} else {
 						count++;
 						forA.get(l).prefPlus(count);
 					}
 				}
+				break;
 			case HRF:
-				for(int v = 0; v < value.length; v++){
+				for (int v = 0; v < value.length; v++) {
 					value[v] = 0;
 				}
 				for (Task t : task) {
 					int maxmin[] = calculate(agent[i].resource(), t.resource());
 					if (maxmin[0] > t.deadline())
 						continue;
-					if(t.reward() > value[0]){
-						System.out.println(t.taskNumber() + ",," +-maxmin[0] + "," + t.deadline());
-						for(Bid b : forA){
-							System.out.println(b.toString());
-						}
-						System.out.println();
-						for(int j = 1; j < value.length ; j++){
-							if(t.reward() < value[j]){
-								for(int k = 0; k < j-1; k++){
-									value[k] = value[k+1];
+					if (t.reward() > value[0]) {
+						for (int j = 1; j < value.length; j++) {
+							if (t.reward() < value[j]) {
+								for (int k = 0; k < j - 1; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j-1]=t.reward();
-								forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								value[j - 1] = t.reward();
+								forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 								break;
 							}
-							if(t.reward() == value[j]){
-								if(Value == REWARD){
+							if (t.reward() == value[j]) {
+								if (Value == REWARD) {
 
-									if(t.reward() > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+									if (t.reward() > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=t.reward();
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = t.reward();
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(t.reward()==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=t.reward();
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = t.reward();
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=t.reward();
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = t.reward();
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
-								if(Value == PROCESSTIME){
-									if(-maxmin[0] > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+								if (Value == PROCESSTIME) {
+									if (-maxmin[0] > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=t.reward();
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = t.reward();
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(-maxmin[0]==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=t.reward();
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = t.reward();
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=t.reward();
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = t.reward();
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
 								break;
 							}
-							if(j == value.length-1){
-								for(int k = 0; k < 4; k++){
-									value[k] = value[k+1];
+							if (j == value.length - 1) {
+								for (int k = 0; k < 4; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j]=t.reward();
-								forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+								value[j] = t.reward();
+								forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 							}
 						}
 					}
 				}
-				for(int l = bidNumber-2; l >= bidNumber-forA.size(); l--){
-					if(value[l] == value[l+1])
-						forA.get(l).prefPlus(count);
-					else{
+				for (int l = 1; l < forA.size(); l++) {
+					if (forA.get(l).reward() == forA.get(l - 1).reward()) {
+						if (forA.get(l).value() == forA.get(l - 1).value()){
+							forA.get(l).prefPlus(count);
+						}
+						else {
+							count++;
+							forA.get(l).prefPlus(count);
+						}
+					} else {
 						count++;
 						forA.get(l).prefPlus(count);
 					}
 				}
-				for(int u = 0; u < forA.size(); u++){
-					System.out.println(forA.get(u).toString()+",  " +value[4-u]);
-				}
-				System.exit(1);
 				break;
 			case SPTF:
-				for(int v = 0; v < value.length; v++){
+				for (int v = 0; v < value.length; v++) {
 					value[v] = -100;
 				}
 				for (Task t : task) {
 					int maxmin[] = calculate(agent[i].resource(), t.resource());
 					if (maxmin[0] > t.deadline())
 						continue;
-					if(-maxmin[0] > value[0]){
-						System.out.println(t.taskNumber() + ",," +-maxmin[0] + "," + t.deadline());
-						for(Bid b : forA){
-							System.out.println(b.toString());
-						}
-						System.out.println();
-						for(int j = 1; j < value.length ; j++){
-							if(-maxmin[0] < value[j]){
-								for(int k = 0; k < j-1; k++){
-									value[k] = value[k+1];
+					if (-maxmin[0] > value[0]) {
+						for (int j = 1; j < value.length; j++) {
+							if (-maxmin[0] < value[j]) {
+								for (int k = 0; k < j - 1; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j-1]=-maxmin[0];
-								forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								value[j - 1] = -maxmin[0];
+								forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 								break;
 							}
-							if(-maxmin[0] == value[j]){
-								if(Value == REWARD){
+							if (-maxmin[0] == value[j]) {
+								if (Value == REWARD) {
 
-									if(t.reward() > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+									if (t.reward() > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=-maxmin[0];
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = -maxmin[0];
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(t.reward()==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=-maxmin[0];
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = -maxmin[0];
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=-maxmin[0];
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = -maxmin[0];
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
-								if(Value == PROCESSTIME){
-									if(-maxmin[0] > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+								if (Value == PROCESSTIME) {
+									if (-maxmin[0] > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=-maxmin[0];
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = -maxmin[0];
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(-maxmin[0]==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=-maxmin[0];
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = -maxmin[0];
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=-maxmin[0];
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = -maxmin[0];
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
 								break;
 							}
-							if(j == value.length-1){
-								for(int k = 0; k < 4; k++){
-									value[k] = value[k+1];
+							if (j == value.length - 1) {
+								for (int k = 0; k < 4; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j]=-maxmin[0];
-								forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+								value[j] = -maxmin[0];
+								forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 							}
 						}
 					}
 				}
+				for (int l = 1; l < forA.size(); l++) {
+					if (forA.get(l).processTime() == forA.get(l - 1).processTime()) {
+						if (forA.get(l).value() == forA.get(l - 1).value())
+							forA.get(l).prefPlus(count);
+						else {
+							count++;
+							forA.get(l).prefPlus(count);
+						}
+					} else {
+						count++;
+						forA.get(l).prefPlus(count);
+					}
+				}
+				break;
 			case CEF:
-				for(int v = 0; v < value.length; v++){
+				for (int v = 0; v < value.length; v++) {
 					value[v] = 0;
 				}
 				for (Task t : task) {
 					int maxmin[] = calculate(agent[i].resource(), t.resource());
 					if (maxmin[0] > t.deadline())
 						continue;
-					if(t.reward()/maxmin[0] > value[0]){
-						System.out.println(t.taskNumber() + ",," +-maxmin[0] + "," + t.deadline());
-						for(Bid b : forA){
-							System.out.println(b.toString());
-						}
-						System.out.println();
-						for(int j = 1; j < value.length ; j++){
-							if(t.reward()/maxmin[0] < value[j]){
-								for(int k = 0; k < j-1; k++){
-									value[k] = value[k+1];
+					if (t.reward() / maxmin[0] > value[0]) {
+						for (int j = 1; j < value.length; j++) {
+							if (t.reward() / maxmin[0] < value[j]) {
+								for (int k = 0; k < j - 1; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j-1]=t.reward()/maxmin[0];
-								forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								value[j - 1] = t.reward() / maxmin[0];
+								forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 								break;
 							}
-							if(t.reward()/maxmin[0] == value[j]){
-								if(Value == REWARD){
+							if (t.reward() / maxmin[0] == value[j]) {
+								if (Value == REWARD) {
 
-									if(t.reward() > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+									if (t.reward() > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=t.reward()/maxmin[0];
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = t.reward() / maxmin[0];
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(t.reward()==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=t.reward()/maxmin[0];
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = t.reward() / maxmin[0];
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=t.reward()/maxmin[0];
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = t.reward() / maxmin[0];
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
-								if(Value == PROCESSTIME){
-									if(-maxmin[0] > forA.get(bidNumber-j-1).value()){
-										if(j != value.length-1)
+								if (Value == PROCESSTIME) {
+									if (-maxmin[0] > forA.get(bidNumber - j - 1).value()) {
+										if (j != value.length - 1)
 											continue;
-										else{
-											for(int k = 0; k < 4; k++){
-												value[k] = value[k+1];
+										else {
+											for (int k = 0; k < 4; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j]=t.reward()/maxmin[0];
-											forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+											value[j] = t.reward() / maxmin[0];
+											forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 										}
-									}else if(-maxmin[0]==forA.get(bidNumber-j-1).value()){
-										if(random.nextDouble() < 0.5){
+									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
+										if (random.nextDouble() < 0.5) {
 											continue;
-										}else{
-											for(int k = 0; k < j-1; k++){
-												value[k] = value[k+1];
+										} else {
+											for (int k = 0; k < j - 1; k++) {
+												value[k] = value[k + 1];
 											}
-											value[j-1]=t.reward()/maxmin[0];
-											forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-											if(forA.size()>bidNumber)
-												forA.remove(forA.size()-1);
+											value[j - 1] = t.reward() / maxmin[0];
+											forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+											if (forA.size() > bidNumber)
+												forA.remove(forA.size() - 1);
 											break;
 										}
-									}else{
-										for(int k = 0; k < j-1; k++){
-											value[k] = value[k+1];
+									} else {
+										for (int k = 0; k < j - 1; k++) {
+											value[k] = value[k + 1];
 										}
-										value[j-1]=t.reward()/maxmin[0];
-										forA.add(bidNumber-j,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
-										if(forA.size()>bidNumber)
-											forA.remove(forA.size()-1);
+										value[j - 1] = t.reward() / maxmin[0];
+										forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+										if (forA.size() > bidNumber)
+											forA.remove(forA.size() - 1);
 										break;
 									}
 								}
 								break;
 							}
-							if(j == value.length-1){
-								for(int k = 0; k < 4; k++){
-									value[k] = value[k+1];
+							if (j == value.length - 1) {
+								for (int k = 0; k < 4; k++) {
+									value[k] = value[k + 1];
 								}
-								value[j]=t.reward();
-								forA.add(0,new Bid(t,agent[i],t.reward(),1,1,maxmin[0]));
+								value[j] = t.reward() / maxmin[0];
+								forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
 
-								if(forA.size()>bidNumber)
-									forA.remove(forA.size()-1);
+								if (forA.size() > bidNumber)
+									forA.remove(forA.size() - 1);
 							}
 						}
 					}
 				}
-				for(int l = bidNumber-2; l >= bidNumber-forA.size(); l--){
-					if(value[l] == value[l+1])
-						forA.get(l).prefPlus(count);
-					else{
+				for (int l = 1; l < forA.size(); l++) {
+					if (forA.get(l).reward() / forA.get(l).processTime() == forA.get(l - 1).reward()
+							/ forA.get(l).processTime()) {
+						if (forA.get(l).value() == forA.get(l - 1).value())
+							forA.get(l).prefPlus(count);
+						else {
+							count++;
+							forA.get(l).prefPlus(count);
+						}
+					} else {
 						count++;
 						forA.get(l).prefPlus(count);
 					}
 				}
-				for(int u = 0; u < forA.size(); u++){
-					System.out.println(forA.get(u).toString()+",  " +value[4-u]);
-				}
-				System.exit(1);
-
-				for(int l = bidNumber-2; l >= bidNumber-forA.size(); l--){
-					if(value[l] == value[l+1])
-						forA.get(l).prefPlus(count);
-					else{
-						count++;
-						forA.get(l).prefPlus(count);
-					}
-				}
-				for(int u = 0; u < forA.size(); u++){
-					System.out.println(forA.get(u).toString()+",  " +value[4-u]);
-				}
-				System.exit(1);
 				break;
 			}
 
-
 			agentBid.add(forA);
-			for(int j = 0; j < forA.size(); j++){
+			for (int j = 0; j < forA.size(); j++) {
 				bid.get(forA.get(j).taskNumber()).add(forA.get(j));
 			}
 
@@ -571,17 +562,17 @@ public class MakeObject {
 			checker = random.nextDouble();
 			if (checker < prob[0])
 				task.add(new Task(task.size(), normalTask(LENGTH, random),
-						deadlineUnder + random.nextInt(deadlineRange + 1),random));
+						deadlineUnder + random.nextInt(deadlineRange + 1), random));
 			else {
 				if (checker < prob[0] + prob[1])
 					task.add(new Task(task.size(), biasTask(LENGTH, random, 0),
-							deadlineUnder + random.nextInt(deadlineRange + 1),random));
+							deadlineUnder + random.nextInt(deadlineRange + 1), random));
 				else if (checker < prob[0] + prob[1] + prob[2])
 					task.add(new Task(task.size(), biasTask(LENGTH, random, 1),
-							deadlineUnder + random.nextInt(deadlineRange + 1),random));
+							deadlineUnder + random.nextInt(deadlineRange + 1), random));
 				else
 					task.add(new Task(task.size(), biasTask(LENGTH, random, 2),
-							deadlineUnder + random.nextInt(deadlineRange + 1),random));
+							deadlineUnder + random.nextInt(deadlineRange + 1), random));
 			}
 
 		}
