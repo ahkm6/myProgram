@@ -9,6 +9,7 @@ public class Bid {
 	int preferentialNumber;
 	int tempPreference;
 	int processTime;
+	int duration;
 	int value;
 	int allocated;
 
@@ -24,39 +25,57 @@ public class Bid {
 		else if (Value == PROCESSTIME)
 			this.value = -pTime;
 		this.allocated = 0;
+		this.duration = pTime + (task.generateTime() - task.deadline());
 	}
 
-	public int value(){
+	public double match() {
+		return this.reward / this.processTime;
+	}
+
+	public int value() {
 		return this.value;
 	}
-	public Task task(){
+
+	public Task task() {
 		return this.task;
 	}
-	public Agent agent(){
-		 return this.agent;
+
+	public Agent agent() {
+		return this.agent;
 	}
-	public boolean allocated(){
+
+	public boolean allocated() {
 		if (allocated == 1)
 			return true;
 		else
 			return false;
 	}
-	public void allocated(int n){
+
+	public void allocated(int n) {
 		this.allocated = n;
 	}
-	public int preferentialNumber(){
+
+	public int preferentialNumber() {
 		return this.preferentialNumber;
 	}
-	public int tempPreference(){
+
+	public int tempPreference() {
 		return this.tempPreference;
 	}
+
 	public int agentNumber() {
 		return this.agent.agentNumber();
 	}
-	public int reward(){
+
+	public int reward() {
 		return this.reward;
 	}
-	public int processTime(){
+
+	public int duration() {
+		return this.duration;
+	}
+
+	public int processTime() {
 		return this.processTime;
 	}
 
@@ -72,15 +91,18 @@ public class Bid {
 		this.preferentialNumber += count;
 		this.tempPreference += count;
 	}
-	public void tempUp(){
+
+	public void tempUp() {
 		this.tempPreference--;
 	}
-	public void tempDown(){
+
+	public void tempDown() {
 		this.tempPreference++;
 	}
 
 	public String toString() {
-		return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + tempPreference + "," + this.value;
+		return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + tempPreference + ","
+				+ this.allocated;
 
 	}
 }

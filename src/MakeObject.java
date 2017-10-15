@@ -7,7 +7,7 @@ public class MakeObject {
 	final static int HRF = Main.HRF;
 	final static int SPTF = Main.SPTF;
 	final static int CEF = Main.CEF;
-	final static int EREARN = Main.EREARN;
+	final static int ELEARN = Main.ELEARN;
 	final static int RLEARN = Main.RLEARN;
 	final static int LANDOM = Main.LANDOM;
 

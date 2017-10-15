@@ -5,7 +5,9 @@ public class Agent {
 	int agentNumber;
 	int agentResource[] = new int[3];
 	int agentStrategy;
+	double[] Q = new double[4];
 	int status;
+	double reward;
 	static int strategy = Main.strategy;
 
 	public Agent(int agentNum, int[] agentRec, Random random) {
@@ -28,6 +30,31 @@ public class Agent {
 
 	public int agentStrategy() {
 		return this.agentStrategy;
+	}
+
+	public int agentStrategy(int n) {
+		this.agentStrategy = n;
+		return n;
+	}
+
+	public void busy(int n) {
+		this.status = n;
+	}
+
+	public boolean elapsedTime() {
+		this.status--;
+		if (this.status == 0)
+			return true;
+		else
+			return false;
+	}
+
+	public void reward(double d) {
+		this.reward = d;
+	}
+
+	public double reward() {
+		return this.reward;
 	}
 
 	public String toString() {

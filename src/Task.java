@@ -8,6 +8,7 @@ public class Task {
 	int taskResource[] = new int[3];
 	int reward;
 	int deadline;
+	int generateTime;
 	int allocated;
 
 	public Task(int taskNum, int[] taskRes, int deadline, Random random) {
@@ -19,6 +20,7 @@ public class Task {
 		else
 			this.reward = random.nextInt(90) + 90;
 		this.deadline = deadline;
+		this.generateTime = deadline;
 		this.allocated = 0;
 	}
 
@@ -41,12 +43,22 @@ public class Task {
 	public int deadline() {
 		return this.deadline;
 	}
+	public int generateTime(){
+		return this.generateTime;
+	}
 	public void allocated(int n){
 		this.allocated = n;
 	}
 
 	public boolean allocated(){
 		if (allocated == 1)
+			return true;
+		else
+			return false;
+	}
+	public boolean elapsedTime(){
+		this.deadline--;
+		if(this.deadline == 0)
 			return true;
 		else
 			return false;

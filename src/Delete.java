@@ -30,40 +30,38 @@ public class Delete{
 		}
 		for(ArrayList<Bid> b : bid){
 			if(b.get(0).taskNumber() == taskNumber){
-				counter = 0;
 				for(Bid t : b){
+					counter = 0;
 					if(t.allocated())
 						continue;
-					t.allocated(1);
 					for(int i = counter; i < agentBid.size(); i++){
-						
 						if(t.agentNumber() == agentBid.get(i).get(0).agentNumber()){
 							for(int j = 0; j < agentBid.get(i).size(); j++){
 								if(t.taskNumber() == agentBid.get(i).get(j).taskNumber()){
 									chacker = 0;
 									for(int k = j-1; k > 0; k--){
-										if(agentBid.get(i).get(j).tempPreference() == agentBid.get(i).get(k).tempPreference() || agentBid.get(i).get(k).allocated()!=true){
+										if(agentBid.get(i).get(j).tempPreference() == agentBid.get(i).get(k).tempPreference() && agentBid.get(i).get(k).allocated()!=true){
 											chacker = 1;
 											break;
 										}
 									}
-									for(int k = j+1; k > agentBid.get(i).size(); k++){
-										if(agentBid.get(i).get(j).tempPreference() == agentBid.get(i).get(k).tempPreference() || agentBid.get(i).get(k).allocated()!=true){
+									for(int k = j+1; k < agentBid.get(i).size(); k++){
+										if(agentBid.get(i).get(j).tempPreference() == agentBid.get(i).get(k).tempPreference() && agentBid.get(i).get(k).allocated()!=true){
 											chacker = 1;
 											break;
 										}
 									}
 									if(chacker == 0){
-										for(int k = j+1; k > agentBid.get(i).size(); k++){
+										for(int k = j+1; k < agentBid.get(i).size(); k++){
 											if(agentBid.get(i).get(k).allocated()!=true){
 												agentBid.get(i).get(k).tempUp();
-												System.out.println("きたぞ！");
 											}
 										}
 									}
 								}
 							}
 							counter = i;
+							t.allocated(1);
 							break;
 						}
 					}
@@ -72,7 +70,7 @@ public class Delete{
 			}
 		}
 	}
-	public void DeleteTask(ArrayList<ArrayList<Bid>> bid, ArrayList<ArrayList<Bid>> reserveBid, ArrayList<Task> task, Bid item){
+	public void DeleteTask(ArrayList<ArrayList<Bid>> bid, ArrayList<Task> task, Bid item){
 		for(int i = 0; i < task.size(); i++){
 			if(item.taskNumber() == task.get(i).taskNumber()){
 				task.get(i).allocated(1);
@@ -82,7 +80,6 @@ public class Delete{
 		}
 		for(int i = 0; i < bid.size(); i++){
 			if(bid.get(i).get(0).taskNumber() == item.taskNumber()){
-				reserveBid.add(bid.get(i));
 				bid.remove(i);
 				break;
 			}
