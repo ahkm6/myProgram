@@ -34,17 +34,17 @@ public class Main {
 	final static int large = 1;
 	final static int no = 2;
 
-	static int SIMULATIONTIME = 100001;
+	static int SIMULATIONTIME = 20001;
 	static int Value = PROCESSTIME;
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 1;
-	static int incliment = 13;
+	static int Loop = 10;
+	static int incliment = 1;
 	static int taskLoad = 24;
 	static int strategy = ELEARN;
 	static int method = SRNF;
-	static int Output = little;
+	static int Output = large;
 
 	public static void main(String[] args) {
 		MakeObject object = new MakeObject();
@@ -59,6 +59,11 @@ public class Main {
 		String val = other.PrintValue(Value);
 		String rew = other.PrintReward(taskReward);
 
+		if (Output == large && incliment != 1) {
+			System.out.println("something is wrong");
+			System.exit(1);
+		}
+
 		for (int bias = 0; bias < 4; bias++) {
 			double[] prob = other.bias(bias);
 
@@ -69,11 +74,12 @@ public class Main {
 			double[] IncDuration = new double[incliment];
 			double[][] IncQ = new double[incliment][4];
 
-			double[][] incSum = new double[incliment][SIMULATIONTIME];
-			double[][] incDrop = new double[incliment][SIMULATIONTIME];
-			double[][] incWorkRate = new double[incliment][SIMULATIONTIME];
-			double[][] incProcessTime = new double[incliment][SIMULATIONTIME];
-			double[][] incDuration = new double[incliment][SIMULATIONTIME];
+			double[] largeSum = new double[SIMULATIONTIME];
+			double[] largeDrop = new double[SIMULATIONTIME];
+			double[] largeWorkRate = new double[SIMULATIONTIME];
+			double[] largeProcessTime = new double[SIMULATIONTIME];
+			double[] largeDuration = new double[SIMULATIONTIME];
+			double[][] largeQ = new double[SIMULATIONTIME][4];
 
 			for (int inc = 0; inc < incliment; inc++) {
 				int taskload = taskLoad + inc * 2;
@@ -94,7 +100,7 @@ public class Main {
 					int processedNumber = 0;
 
 					int time = 1;
-					Random random = new Random(10001);
+					Random random = new Random(loop * 30 + 1000001);
 
 					Agent[] agent = new Agent[AGENT];
 					ArrayList<Task> task = new ArrayList<Task>();
@@ -108,10 +114,10 @@ public class Main {
 					ArrayList<Bid> cand = new ArrayList<Bid>();
 					Bid item;
 					object.makeAgent(agent, agentType, random);
-				/*	for(Agent a : agent){
-						System.out.println(a.toString());
-					}
-					System.exit(1);;*/
+					/*
+					 * for(Agent a : agent){ System.out.println(a.toString()); }
+					 * System.exit(1);;
+					 */
 					System.out.println(agent[258].toString());
 					while (time < SIMULATIONTIME) {
 						object.makeTask(task, other.poisson(taskload, random), random, prob);
@@ -203,7 +209,7 @@ public class Main {
 						}
 						for (int i = 0; i < busyAgent.size(); i++) {
 							if (busyAgent.get(i).elapsedTime()) {
-								if (strategy==ELEARN||strategy==RLEARN) {
+								if (strategy == ELEARN || strategy == RLEARN) {
 									learning.update(busyAgent.get(i), busyAgent.get(i).reward());
 									learning.greedy(busyAgent.get(i), random);
 								}
@@ -221,16 +227,16 @@ public class Main {
 								learning.update(b.get(0).agent(), 0);
 								learning.greedy(b.get(0).agent(), random);
 							}
-						int count = 0;
+
 						KEEP.addAll(0, allocation);
 						while (KEEP.size() > 51)
 							KEEP.remove(KEEP.size() - 1);
 						other.calculate(KEEP);
 						for (Bid b : allocation) {
-							count++;
-							if(strategy == ELEARN)
+
+							if (strategy == ELEARN)
 								b.agent().reward(other.bias(b));
-							else if(strategy == RLEARN)
+							else if (strategy == RLEARN)
 								b.agent().reward(b.reward());
 							sum += b.reward();
 							processTime += b.processTime();
@@ -242,34 +248,43 @@ public class Main {
 						if (processedNumber != 0) {
 							loopSum[time] = sum;
 							loopDrop[time] = drop;
-							loopProcessTime[time] = processTime  / processedNumber;
+							loopProcessTime[time] = processTime / processedNumber;
 							loopDuration[time] = duration / processedNumber;
+							largeSum[time] += sum;
+							largeDrop[time] += drop;
+							largeProcessTime[time] += processTime / processedNumber;
+							largeDuration[time] += duration / processedNumber;
 						} else {
 							loopSum[time] = 0;
 							loopDrop[time] = drop;
 							loopProcessTime[time] = 0;
 							loopDuration[time] = 0;
+							loopSum[time] = 0;
+							loopDrop[time] = drop;
+							loopProcessTime[time] = 0;
+							loopDuration[time] = 0;
 						}
-						if (Output == little) {
-						//	if (time > SIMULATIONTIME - 1001)
-								for (Agent a : agent)
-									loopQ[time][a.agentStrategy()]++;
+
+						for (Agent a : agent){
+							loopQ[time][a.agentStrategy()]++;
+							largeQ[time][a.agentStrategy()]++;
 						}
 						loopWorkRate[time] = (double) busyAgent.size() / AGENT;
+						largeWorkRate[time] = (double) busyAgent.size() / AGENT;
+
 						bid.clear();
 						agentBid.clear();
 						envyList.clear();
 						allocation.clear();
-						sum=drop=processTime=duration=0;
+						sum = drop = processTime = duration = 0;
 						time++;
-						if(time%100 == 0){
-							System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
-					//	System.out.printf("%d %d  %.3f, %.3f, %.3f, %.3f, %3f",time,agent[3].status,agent[3].Q[0],agent[3].Q[1],agent[3].Q[2],agent[3].Q[3],agent[3].reward);
-					//	System.out.println();
+						// if(time%100 == 0){
+						// System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
+						// System.out.printf("%d %d %.3f, %.3f, %.3f, %.3f,
+						// %3f",time,agent[3].status,agent[3].Q[0],agent[3].Q[1],agent[3].Q[2],agent[3].Q[3],agent[3].reward);
+						// System.out.println();
 					}
-						if(time > 80000)
-							System.exit(1);
-					}
+
 					if (Output == little) {
 						for (int i = SIMULATIONTIME - 1; i > SIMULATIONTIME - 1001; i--) {
 							IncSum[inc] += loopSum[i] / 1000;
@@ -282,17 +297,17 @@ public class Main {
 							IncQ[inc][2] += loopQ[i][2] / 1000;
 							IncQ[inc][3] += loopQ[i][3] / 1000;
 						}
-					} else {
-						incSum[inc] = loopSum;
-						incDrop[inc] = loopDrop;
-						incProcessTime[inc] = loopProcessTime;
-						incDuration[inc] = loopDuration;
-						incWorkRate[inc] = loopWorkRate;
 					}
 					System.out.println(loop + "周目終わり");
+
 				}
+				if (Output == large)
+					output.changeRatio(loopSum, loopDrop, loopProcessTime, loopDuration, loopWorkRate, loopQ, bias, str,
+							age, val, rew);
 			}
-			output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ, bias, str, age, val, rew);
+			if (Output == little)
+				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ, bias, str, age, val,
+						rew);
 		}
 	}
 }
