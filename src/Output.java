@@ -21,15 +21,15 @@ public class Output {
 			double[][] Q = new double[sum.length][4];
 			for (int i = 0; i < Sum.length; i++) {
 				for (int j = i * 10; j < i * 10 + 10; j++) {
-					Sum[i] += sum[j];
-					Drop[i] += drop[j];
-					PTime[i] += pTime[j];
-					Duration[i] += duration[j];
-					Rate[i] += rate[j];
-					Q[i][0] = q[j][0];
-					Q[i][1] = q[j][1];
-					Q[i][2] = q[j][2];
-					Q[i][3] = q[j][3];
+					Sum[i] += sum[j] / 10;
+					Drop[i] += drop[j] / 10;
+					PTime[i] += pTime[j] / 10;
+					Duration[i] += duration[j] / 10;
+					Rate[i] += rate[j] / 10;
+					Q[i][0] = q[j][0] / 10;
+					Q[i][1] = q[j][1] / 10;
+					Q[i][2] = q[j][2] / 10;
+					Q[i][3] = q[j][3] / 10;
 				}
 			}
 			pw.println(bias);
