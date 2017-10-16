@@ -34,17 +34,17 @@ public class Main {
 	final static int large = 1;
 	final static int no = 2;
 
-	static int SIMULATIONTIME = 5001;
+	static int SIMULATIONTIME = 100001;
 	static int Value = PROCESSTIME;
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
 	static int Loop = 1;
 	static int incliment = 13;
-	static int taskLoad = 6;
+	static int taskLoad = 24;
 	static int strategy = ELEARN;
 	static int method = SRNF;
-	static int Output = no;
+	static int Output = little;
 
 	public static void main(String[] args) {
 		MakeObject object = new MakeObject();
@@ -108,7 +108,11 @@ public class Main {
 					ArrayList<Bid> cand = new ArrayList<Bid>();
 					Bid item;
 					object.makeAgent(agent, agentType, random);
-
+				/*	for(Agent a : agent){
+						System.out.println(a.toString());
+					}
+					System.exit(1);;*/
+					System.out.println(agent[258].toString());
 					while (time < SIMULATIONTIME) {
 						object.makeTask(task, other.poisson(taskload, random), random, prob);
 						for (int i = 0; i < task.size(); i++) {
@@ -157,10 +161,11 @@ public class Main {
 									}
 									item = changingList.get(num);
 
-									for (int i = 0; i < allocation.size(); i++) {
-										if (changingList.get(num).taskNumber() == allocation.get(i).taskNumber()) {
-											task.add(changingList.get(num).task());
-											changingList.get(num).task().allocated(0);
+									for (int k = 0; k < allocation.size(); k++) {
+										if (changingList.get(num).agentNumber() == allocation.get(k).agentNumber()) {
+											task.add(allocation.get(k).task());
+											allocation.get(k).task().allocated(0);
+											allocation.remove(k);
 											break;
 										}
 									}
@@ -175,6 +180,7 @@ public class Main {
 												if (envyList.get(i).get(j).preferentialNumber() >= changingList.get(num)
 														.preferentialNumber()) {
 													envyList.get(i).remove(j);
+													j--;
 												}
 											}
 										}
@@ -200,7 +206,6 @@ public class Main {
 								if (strategy==ELEARN||strategy==RLEARN) {
 									learning.update(busyAgent.get(i), busyAgent.get(i).reward());
 									learning.greedy(busyAgent.get(i), random);
-
 								}
 								busyAgent.remove(i);
 								i--;
@@ -216,24 +221,26 @@ public class Main {
 								learning.update(b.get(0).agent(), 0);
 								learning.greedy(b.get(0).agent(), random);
 							}
+						int count = 0;
+						KEEP.addAll(0, allocation);
+						while (KEEP.size() > 51)
+							KEEP.remove(KEEP.size() - 1);
+						other.calculate(KEEP);
 						for (Bid b : allocation) {
+							count++;
 							if(strategy == ELEARN)
 								b.agent().reward(other.bias(b));
 							else if(strategy == RLEARN)
 								b.agent().reward(b.reward());
 							sum += b.reward();
 							processTime += b.processTime();
-							duration = b.duration();
+							duration += b.duration();
 							agent[b.agentNumber()].busy(b.processTime());
 							busyAgent.add(b.agent());
 						}
-						KEEP.addAll(0, allocation);
-						while (KEEP.size() > 51)
-							KEEP.remove(KEEP.size() - 1);
-						other.calculate(KEEP);
 						processedNumber = allocation.size();
 						if (processedNumber != 0) {
-							loopSum[time] = sum / processedNumber;
+							loopSum[time] = sum;
 							loopDrop[time] = drop;
 							loopProcessTime[time] = processTime  / processedNumber;
 							loopDuration[time] = duration / processedNumber;
@@ -244,7 +251,7 @@ public class Main {
 							loopDuration[time] = 0;
 						}
 						if (Output == little) {
-							if (time > SIMULATIONTIME - 1001)
+						//	if (time > SIMULATIONTIME - 1001)
 								for (Agent a : agent)
 									loopQ[time][a.agentStrategy()]++;
 						}
@@ -252,10 +259,16 @@ public class Main {
 						bid.clear();
 						agentBid.clear();
 						envyList.clear();
-						if(time%5 == 0)System.out.println(sum/processedNumber + "," + task.size()+","+busyAgent.size());
+						allocation.clear();
 						sum=drop=processTime=duration=0;
 						time++;
-
+						if(time%100 == 0){
+							System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
+					//	System.out.printf("%d %d  %.3f, %.3f, %.3f, %.3f, %3f",time,agent[3].status,agent[3].Q[0],agent[3].Q[1],agent[3].Q[2],agent[3].Q[3],agent[3].reward);
+					//	System.out.println();
+					}
+						if(time > 80000)
+							System.exit(1);
 					}
 					if (Output == little) {
 						for (int i = SIMULATIONTIME - 1; i > SIMULATIONTIME - 1001; i--) {

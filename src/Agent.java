@@ -43,6 +43,10 @@ public class Agent {
 
 	public boolean elapsedTime() {
 		this.status--;
+		if(status < 0){
+			System.out.println("yabai" + agentNumber);
+			System.exit(1);
+		}
 		if (this.status == 0)
 			return true;
 		else
@@ -59,6 +63,6 @@ public class Agent {
 
 	public String toString() {
 		return this.agentNumber + "," + this.agentResource[0] + "," + this.agentResource[1] + ","
-				+ this.agentResource[2] + "," + this.status;
+				+ this.agentResource[2] + "," + this.agentStrategy;
 	}
 }

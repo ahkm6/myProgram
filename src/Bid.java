@@ -101,8 +101,8 @@ public class Bid {
 	}
 
 	public String toString() {
-		return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + tempPreference + ","
-				+ this.allocated;
+		return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + preferentialNumber + ","
+				+ this.value;
 
 	}
 }
