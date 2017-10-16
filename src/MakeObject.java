@@ -275,10 +275,9 @@ public class MakeObject {
 				}
 				for (int l = 1; l < forA.size(); l++) {
 					if (forA.get(l).reward() == forA.get(l - 1).reward()) {
-						if (forA.get(l).value() == forA.get(l - 1).value()){
+						if (forA.get(l).value() == forA.get(l - 1).value()) {
 							forA.get(l).prefPlus(count);
-						}
-						else {
+						} else {
 							count++;
 							forA.get(l).prefPlus(count);
 						}
@@ -544,12 +543,12 @@ public class MakeObject {
 				}
 				break;
 			}
-
-			agentBid.add(forA);
-			for (int j = 0; j < forA.size(); j++) {
-				bid.get(forA.get(j).taskNumber()).add(forA.get(j));
+			if (forA.isEmpty() != true) {
+				agentBid.add(forA);
+				for (int j = 0; j < forA.size(); j++) {
+					bid.get(forA.get(j).taskNumber()).add(forA.get(j));
+				}
 			}
-
 		}
 	}
 

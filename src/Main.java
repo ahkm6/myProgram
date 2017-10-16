@@ -32,6 +32,7 @@ public class Main {
 
 	final static int little = 0;
 	final static int large = 1;
+	final static int no = 2;
 
 	static int SIMULATIONTIME = 5001;
 	static int Value = PROCESSTIME;
@@ -43,7 +44,7 @@ public class Main {
 	static int taskLoad = 6;
 	static int strategy = ELEARN;
 	static int method = SRNF;
-	static int Output = little;
+	static int Output = no;
 
 	public static void main(String[] args) {
 		MakeObject object = new MakeObject();
@@ -75,7 +76,7 @@ public class Main {
 			double[][] incDuration = new double[incliment][SIMULATIONTIME];
 
 			for (int inc = 0; inc < incliment; inc++) {
-				int taskload = taskLoad + incliment * 2;
+				int taskload = taskLoad + inc * 2;
 				double[] loopSum = new double[SIMULATIONTIME];
 				double[] loopDrop = new double[SIMULATIONTIME];
 				double[] loopWorkRate = new double[SIMULATIONTIME];
@@ -232,27 +233,29 @@ public class Main {
 						other.calculate(KEEP);
 						processedNumber = allocation.size();
 						if (processedNumber != 0) {
-							loopSum[time] = (sum - loopSum[time - 1]) / processedNumber;
-							loopDrop[time] = (drop - loopDrop[time - 1]) / processedNumber;
-							loopProcessTime[time] = (processTime - loopProcessTime[time - 1]) / processedNumber;
-							loopDuration[time] = (duration - loopDuration[time - 1]) / processedNumber;
+							loopSum[time] = sum / processedNumber;
+							loopDrop[time] = drop;
+							loopProcessTime[time] = processTime  / processedNumber;
+							loopDuration[time] = duration / processedNumber;
 						} else {
-							loopSum[time] = (sum - loopSum[time - 1]);
-							loopDrop[time] = (drop - loopDrop[time - 1]);
-							loopProcessTime[time] = (processTime - loopProcessTime[time - 1]);
-							loopDuration[time] = (duration - loopDuration[time - 1]);
+							loopSum[time] = 0;
+							loopDrop[time] = drop;
+							loopProcessTime[time] = 0;
+							loopDuration[time] = 0;
 						}
 						if (Output == little) {
 							if (time > SIMULATIONTIME - 1001)
 								for (Agent a : agent)
 									loopQ[time][a.agentStrategy()]++;
 						}
-						loopWorkRate[time] = busyAgent.size() / AGENT;
+						loopWorkRate[time] = (double) busyAgent.size() / AGENT;
 						bid.clear();
 						agentBid.clear();
 						envyList.clear();
+						if(time%5 == 0)System.out.println(sum/processedNumber + "," + task.size()+","+busyAgent.size());
+						sum=drop=processTime=duration=0;
 						time++;
-				//		System.out.println(time + "," + task.size());
+
 					}
 					if (Output == little) {
 						for (int i = SIMULATIONTIME - 1; i > SIMULATIONTIME - 1001; i--) {
