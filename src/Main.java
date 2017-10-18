@@ -35,18 +35,19 @@ public class Main {
 	final static int no = 2;
 
 	static int SIMULATIONTIME = 20001;
-	static int Value = PROCESSTIME;
+	static int Value = REWARD;
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
 	static int Loop = 10;
 	static int incliment = 1;
 	static int taskLoad = 24;
-	static int strategy = ELEARN;
+	static int strategy = EDF;
 	static int method = SRNF;
 	static int Output = large;
 
 	public static void main(String[] args) {
+		System.out.println("開始");
 		MakeObject object = new MakeObject();
 		Others other = new Others();
 		Allocate allocate = new Allocate();
@@ -278,6 +279,8 @@ public class Main {
 						allocation.clear();
 						sum = drop = processTime = duration = 0;
 						time++;
+						if(time == 1000)
+							System.exit(1);
 						// if(time%100 == 0){
 						// System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
 						// System.out.printf("%d %d %.3f, %.3f, %.3f, %.3f,
@@ -302,7 +305,7 @@ public class Main {
 
 				}
 				if (Output == large)
-					output.changeRatio(loopSum, loopDrop, loopProcessTime, loopDuration, loopWorkRate, loopQ, bias, str,
+					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ, bias, str,
 							age, val, rew);
 			}
 			if (Output == little)

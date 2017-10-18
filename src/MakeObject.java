@@ -176,6 +176,11 @@ public class MakeObject {
 								}
 								value[j - 1] = t.reward();
 								forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+								for (int k = 0; k < forA.size() && k < 5; k++) {
+									if (forA.get(k).task().reward() != value[bidNumber - k - 1]) {
+										System.out.println("okashiinjanai?");
+									}
+								}
 								if (forA.size() > bidNumber)
 									forA.remove(forA.size() - 1);
 								break;
@@ -647,7 +652,7 @@ public class MakeObject {
 	public int[] normalTask(int length, Random random) {
 		int[] resource = new int[length];
 		for (int i = 0; i < length; i++) {
-			resource[i] = 30 + random.nextInt(31);
+			resource[i] = 30 + random.nextInt(21);
 		}
 		return resource;
 	}
@@ -656,9 +661,9 @@ public class MakeObject {
 		int[] resource = new int[length];
 		for (int i = 0; i < length; i++) {
 			if (i == number)
-				resource[i] = 70 + random.nextInt(21);
+				resource[i] = 50 + random.nextInt(21);
 			else
-				resource[i] = 10 + random.nextInt(21);
+				resource[i] = 20 + random.nextInt(21);
 		}
 		return resource;
 	}
