@@ -34,15 +34,15 @@ public class Main {
 	final static int large = 1;
 	final static int no = 2;
 
-	static int SIMULATIONTIME = 20001;
+	static int SIMULATIONTIME = 501;
 	static int Value = REWARD;
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 10;
+	static int Loop = 5;
 	static int incliment = 1;
 	static int taskLoad = 24;
-	static int strategy = HRF;
+	static int strategy = ELEARN;
 	static int method = SRNF;
 	static int Output = large;
 
@@ -54,18 +54,20 @@ public class Main {
 		Delete delete = new Delete();
 		Output output = new Output();
 		Learning learning = new Learning();
+		CPLEX cplex = new CPLEX();
 
 		String str = other.PrintTactics(strategy);
 		String age = other.PrintAgent(agentType);
 		String val = other.PrintValue(Value);
 		String rew = other.PrintReward(taskReward);
+		String met = other.PrintMethod(method);
 
 		if (Output == large && incliment != 1) {
 			System.out.println("something is wrong");
 			System.exit(1);
 		}
 
-		for (int bias = 0; bias < 4; bias++) {
+		for (int bias = 1; bias < 4; bias++) {
 			double[] prob = other.bias(bias);
 
 			double[] IncSum = new double[incliment];
@@ -134,7 +136,12 @@ public class Main {
 
 						// 割当開始
 						if (method == CPLEX) {
-
+							try {
+								cplex.cplex(task, bid, agentBid, allocation);
+							} catch (Throwable e) {
+								// TODO 自動生成された catch ブロック
+								e.printStackTrace();
+							}
 						} else if (method == SRNF) {
 							while (bid.isEmpty() != true) {
 								cand = allocate.maxValue(bid, random);
@@ -200,58 +207,60 @@ public class Main {
 
 							}
 							// System.exit(10);
-						}
-						for (int i = 0; i < task.size(); i++) {
-							for (int j = 0; j < envyList.size(); j++) {
-								for (int k = 0; k < envyList.get(j).size(); k++) {
-									if(task.get(i) == envyList.get(j).get(k).task()) {
-										changingList.add(envyList.get(j).get(k));
-									}
-								}
-							}
-							if(changingList.size() > 0) {
-								int num = 0;
-								if (changingList.size() > 1) {
-									int ini = changingList.get(0).value();
-									for (int j = 1; j < changingList.size(); j++) {
-										if (changingList.get(j).value() > ini) {
-											ini = changingList.get(j).value();
-											num = j;
+							for (int i = 0; i < task.size(); i++) {
+								for (int j = 0; j < envyList.size(); j++) {
+									for (int k = 0; k < envyList.get(j).size(); k++) {
+										if(task.get(i) == envyList.get(j).get(k).task()) {
+											changingList.add(envyList.get(j).get(k));
 										}
 									}
 								}
-								for (int k = 0; k < allocation.size(); k++) {
-									if (changingList.get(num).agentNumber() == allocation.get(k).agentNumber()) {
-										task.add(allocation.get(k).task());
-										allocation.get(k).task().allocated(0);
-										allocation.remove(k);
-										allocation.add(changingList.get(num));
-										break;
+								if(changingList.size() > 0) {
+									int num = 0;
+									if (changingList.size() > 1) {
+										int ini = changingList.get(0).value();
+										for (int j = 1; j < changingList.size(); j++) {
+											if (changingList.get(j).value() > ini) {
+												ini = changingList.get(j).value();
+												num = j;
+											}
+										}
 									}
-								}
-								for(int k = 0; k < envyList.size();k++) {
-									if(envyList.get(k).get(0).agentNumber() == changingList.get(num).agentNumber()) {
-										for(int j = 0; j < envyList.size();j++) {
-											if(envyList.get(k).get(j) == changingList.get(num)) {
-												if (changingList.get(num).preferentialNumber() == 1) {
-													envyList.remove(k);
-													break;
-												}
-												for (int l = 0; l < envyList.get(i).size(); l++) {
-													if (envyList.get(k).get(l).preferentialNumber() >= changingList.get(num)
-															.preferentialNumber()) {
-														envyList.get(k).remove(l);
-														l--;
+									for (int k = 0; k < allocation.size(); k++) {
+										if (changingList.get(num).agentNumber() == allocation.get(k).agentNumber()) {
+											task.add(allocation.get(k).task());
+											allocation.get(k).task().allocated(0);
+											allocation.remove(k);
+											allocation.add(changingList.get(num));
+											break;
+										}
+									}
+									for(int k = 0; k < envyList.size();k++) {
+										if(envyList.get(k).get(0).agentNumber() == changingList.get(num).agentNumber()) {
+											for(int j = 0; j < envyList.get(k).size();j++) {
+												if(envyList.get(k).get(j) == changingList.get(num)) {
+													if (changingList.get(num).preferentialNumber() == 1) {
+														envyList.remove(k);
+														break;
+													}
+													for (int l = 0; l < envyList.get(k).size(); l++) {
+														if (envyList.get(k).get(l).preferentialNumber() >= changingList.get(num)
+																.preferentialNumber()) {
+															envyList.get(k).remove(l);
+															l--;
+														}
 													}
 												}
 											}
 										}
 									}
+									task.remove(i);
+									changingList.clear();
+									i--;
 								}
-								task.remove(i);
-								i--;
 							}
 						}
+
 
 						for (int i = 0; i < task.size(); i++) {
 							if (task.get(i).elapsedTime()) {
@@ -331,6 +340,9 @@ public class Main {
 						allocation.clear();
 						sum = drop = processTime = duration = 0;
 						time++;
+						if(time == 1000) {
+							System.out.println("1000");
+						}
 						// if(time%100 == 0){
 						// System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
 						// System.out.printf("%d %d %.3f, %.3f, %.3f, %.3f,
@@ -357,11 +369,11 @@ public class Main {
 				if (Output == large)
 					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,
 							bias, str,
-							age, val, rew);
+							age, val, rew,met);
 			}
 			if (Output == little)
 				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ, bias, str, age, val,
-						rew);
+						rew,met);
 		}
 	}
 }

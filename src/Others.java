@@ -25,6 +25,10 @@ public class Others{
 	final static int deadlineRange = Main.deadlineRange;
 	final static int bidNumber = Main.bidNumber;
 
+	final static int CPLEX = Main.CPLEX;
+	final static int SRNF = Main.SRNF;
+
+
 	double pTime;
 	double reward;
 	double match;
@@ -151,6 +155,21 @@ public class Others{
 		case TASK_RANDOM:
 			S = "TASK_RANDOM";
 			System.out.println("TASK_RANDOM");
+			break;
+		}
+		return S;
+	}
+	public String PrintMethod(int n) {
+		String S = null;
+		System.out.print("Method is ");
+		switch (n) {
+		case CPLEX:
+			S = "CPLEX";
+			System.out.println("CPLEX");
+			break;
+		case SRNF:
+			S = "SRNF";
+			System.out.println("SRNF");
 			break;
 		}
 		return S;
