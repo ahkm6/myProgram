@@ -12,6 +12,7 @@ public class Task {
 	int allocated;
 
 	public Task(int taskNum, int[] taskRes, int deadline, Random random) {
+		random.nextInt(100);
 		this.taskNumber = taskNum;
 		this.taskResource = taskRes;
 		if (taskReward == 0)
@@ -58,7 +59,7 @@ public class Task {
 	}
 	public boolean elapsedTime(){
 		this.deadline--;
-		if(this.deadline == 0)
+		if(this.deadline < 5)
 			return true;
 		else
 			return false;

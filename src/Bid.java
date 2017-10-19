@@ -100,9 +100,12 @@ public class Bid {
 		this.tempPreference++;
 	}
 
-	public String toString() {
+/*	public String toString() {
 		return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + preferentialNumber + ","
 				+ this.value;
 
+	}*/
+	public String toString() {
+		return this.taskNumber() + "," + this.value() +  "," + this.preferentialNumber + "  ";
 	}
 }

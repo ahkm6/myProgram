@@ -42,7 +42,7 @@ public class Main {
 	static int Loop = 10;
 	static int incliment = 1;
 	static int taskLoad = 24;
-	static int strategy = EDF;
+	static int strategy = HRF;
 	static int method = SRNF;
 	static int Output = large;
 
@@ -119,7 +119,6 @@ public class Main {
 					 * for(Agent a : agent){ System.out.println(a.toString()); }
 					 * System.exit(1);;
 					 */
-					System.out.println(agent[258].toString());
 					while (time < SIMULATIONTIME) {
 						object.makeTask(task, other.poisson(taskload, random), random, prob);
 						for (int i = 0; i < task.size(); i++) {
@@ -132,6 +131,7 @@ public class Main {
 								i--;
 							}
 						}
+
 						// 割当開始
 						if (method == CPLEX) {
 
@@ -202,6 +202,58 @@ public class Main {
 							// System.exit(10);
 						}
 						for (int i = 0; i < task.size(); i++) {
+							for (int j = 0; j < envyList.size(); j++) {
+								for (int k = 0; k < envyList.get(j).size(); k++) {
+									if(task.get(i) == envyList.get(j).get(k).task()) {
+										changingList.add(envyList.get(j).get(k));
+									}
+								}
+							}
+							if(changingList.size() > 0) {
+								int num = 0;
+								if (changingList.size() > 1) {
+									int ini = changingList.get(0).value();
+									for (int j = 1; j < changingList.size(); j++) {
+										if (changingList.get(j).value() > ini) {
+											ini = changingList.get(j).value();
+											num = j;
+										}
+									}
+								}
+								for (int k = 0; k < allocation.size(); k++) {
+									if (changingList.get(num).agentNumber() == allocation.get(k).agentNumber()) {
+										task.add(allocation.get(k).task());
+										allocation.get(k).task().allocated(0);
+										allocation.remove(k);
+										allocation.add(changingList.get(num));
+										break;
+									}
+								}
+								for(int k = 0; k < envyList.size();k++) {
+									if(envyList.get(k).get(0).agentNumber() == changingList.get(num).agentNumber()) {
+										for(int j = 0; j < envyList.size();j++) {
+											if(envyList.get(k).get(j) == changingList.get(num)) {
+												if (changingList.get(num).preferentialNumber() == 1) {
+													envyList.remove(k);
+													break;
+												}
+												for (int l = 0; l < envyList.get(i).size(); l++) {
+													if (envyList.get(k).get(l).preferentialNumber() >= changingList.get(num)
+															.preferentialNumber()) {
+														envyList.get(k).remove(l);
+														l--;
+													}
+												}
+											}
+										}
+									}
+								}
+								task.remove(i);
+								i--;
+							}
+						}
+
+						for (int i = 0; i < task.size(); i++) {
 							if (task.get(i).elapsedTime()) {
 								drop++;
 								task.remove(i);
@@ -266,7 +318,7 @@ public class Main {
 							loopDuration[time] = 0;
 						}
 
-						for (Agent a : agent){
+						for (Agent a : agent) {
 							loopQ[time][a.agentStrategy()]++;
 							largeQ[time][a.agentStrategy()]++;
 						}
@@ -279,8 +331,6 @@ public class Main {
 						allocation.clear();
 						sum = drop = processTime = duration = 0;
 						time++;
-						if(time == 1000)
-							System.exit(1);
 						// if(time%100 == 0){
 						// System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
 						// System.out.printf("%d %d %.3f, %.3f, %.3f, %.3f,
@@ -305,7 +355,8 @@ public class Main {
 
 				}
 				if (Output == large)
-					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ, bias, str,
+					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,
+							bias, str,
 							age, val, rew);
 			}
 			if (Output == little)

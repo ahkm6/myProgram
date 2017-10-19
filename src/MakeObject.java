@@ -71,6 +71,16 @@ public class MakeObject {
 										}
 									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < 4; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = t.deadline();
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -109,6 +119,16 @@ public class MakeObject {
 										}
 									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < 4; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = t.deadline();
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -169,18 +189,16 @@ public class MakeObject {
 					if (maxmin[0] > t.deadline())
 						continue;
 					if (t.reward() > value[0]) {
+
 						for (int j = 1; j < value.length; j++) {
 							if (t.reward() < value[j]) {
 								for (int k = 0; k < j - 1; k++) {
 									value[k] = value[k + 1];
 								}
 								value[j - 1] = t.reward();
+
 								forA.add(bidNumber - j, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
-								for (int k = 0; k < forA.size() && k < 5; k++) {
-									if (forA.get(k).task().reward() != value[bidNumber - k - 1]) {
-										System.out.println("okashiinjanai?");
-									}
-								}
+
 								if (forA.size() > bidNumber)
 									forA.remove(forA.size() - 1);
 								break;
@@ -203,6 +221,16 @@ public class MakeObject {
 										}
 									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < bidNumber - 1; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = t.reward();
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -241,6 +269,16 @@ public class MakeObject {
 										}
 									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < bidNumber - 1; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = t.reward();
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -266,7 +304,7 @@ public class MakeObject {
 								break;
 							}
 							if (j == value.length - 1) {
-								for (int k = 0; k < 4; k++) {
+								for (int k = 0; k < bidNumber - 1; k++) {
 									value[k] = value[k + 1];
 								}
 								value[j] = t.reward();
@@ -330,6 +368,16 @@ public class MakeObject {
 										}
 									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < 4; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = -maxmin[0];
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -368,6 +416,16 @@ public class MakeObject {
 										}
 									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < 4; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = -maxmin[0];
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -457,6 +515,16 @@ public class MakeObject {
 										}
 									} else if (t.reward() == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < 4; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = t.reward() / maxmin[0];
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -495,6 +563,16 @@ public class MakeObject {
 										}
 									} else if (-maxmin[0] == forA.get(bidNumber - j - 1).value()) {
 										if (random.nextDouble() < 0.5) {
+											if (j == value.length - 1) {
+												for (int k = 0; k < 4; k++) {
+													value[k] = value[k + 1];
+												}
+												value[j] = t.reward() / maxmin[0];
+												forA.add(0, new Bid(t, agent[i], t.reward(), 1, 1, maxmin[0]));
+
+												if (forA.size() > bidNumber)
+													forA.remove(forA.size() - 1);
+											}
 											continue;
 										} else {
 											for (int k = 0; k < j - 1; k++) {
@@ -671,10 +749,10 @@ public class MakeObject {
 	public int[] calculate(int[] agent, int[] task) {
 		int[] maxmin = { (int) Math.ceil(task[0] / agent[0]), (int) Math.ceil(task[0] / agent[0]) };
 		for (int i = 1; i < LENGTH; i++) {
-			if (maxmin[0] < (int) Math.ceil(task[i] / agent[i]))
-				maxmin[0] = (int) Math.ceil(task[i] / agent[i]);
-			if (maxmin[1] > (int) Math.ceil(task[i] / agent[i]))
-				maxmin[1] = (int) Math.ceil(task[i] / agent[i]);
+			if (maxmin[0] < (int) Math.ceil((double)task[i] / agent[i]))
+				maxmin[0] = (int) Math.ceil((double)task[i] / agent[i]);
+			if (maxmin[1] > (int) Math.ceil((double)task[i] / agent[i]))
+				maxmin[1] = (int) Math.ceil((double)task[i] / agent[i]);
 		}
 		return maxmin;
 	}
