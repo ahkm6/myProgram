@@ -12,7 +12,7 @@ public class Output {
 	public void changeRatio(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
-			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/100" + str
+			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/Change100" + str
 					+","+ age +","+ val+"," + rew+"," +met+ ".csv", true); // ※１
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			double[] Sum = new double[sum.length / slice];

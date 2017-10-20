@@ -42,6 +42,7 @@ public class CPLEX {
 				box[i] = cplex.intVarArray(agentBid.size(), 0, 1);
 
 			}
+
 			for (int i = 0; i < box.length; i++)
 				for (int j = 0; j < box[i].length; j++)
 					transpose[j][i] = box[i][j];

@@ -34,17 +34,17 @@ public class Main {
 	final static int large = 1;
 	final static int no = 2;
 
-	static int SIMULATIONTIME = 501;
+	static int SIMULATIONTIME = 3001;
 	static int Value = REWARD;
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 5;
-	static int incliment = 1;
-	static int taskLoad = 24;
-	static int strategy = ELEARN;
-	static int method = SRNF;
-	static int Output = large;
+	static int Loop = 3;
+	static int incliment = 10;
+	static int taskLoad = 10;
+	static int strategy = HRF;
+	static int method = CPLEX;
+	static int Output = little;
 
 	public static void main(String[] args) {
 		System.out.println("開始");
@@ -67,7 +67,7 @@ public class Main {
 			System.exit(1);
 		}
 
-		for (int bias = 1; bias < 4; bias++) {
+		for (int bias = 0; bias < 4; bias++) {
 			double[] prob = other.bias(bias);
 
 			double[] IncSum = new double[incliment];
@@ -343,6 +343,7 @@ public class Main {
 						if(time == 1000) {
 							System.out.println("1000");
 						}
+			//			System.out.println(task.size() + "," + busyAgent.size());
 						// if(time%100 == 0){
 						// System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
 						// System.out.printf("%d %d %.3f, %.3f, %.3f, %.3f,

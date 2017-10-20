@@ -1,0 +1,7 @@
+Tried aggregator 1 time.
+MIP Presolve eliminated 1151 rows and 1740 columns.
+MIP Presolve modified 10 coefficients.
+Reduced MIP has 849 rows, 808 columns, and 107031 nonzeros.
+Reduced MIP has 808 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Probing time =    0.00 sec.
+Tried aggregator 1 time.
