@@ -17,6 +17,9 @@ public class Bid {
 		this.task = task;
 		this.agent = agent;
 		this.reward = rew;
+	/*	this.reward = (int) (task.reward() / 2 + task.reward()
+		* (task.deadline() - pTime)
+		/ (2 * task.originalDeadline));*/
 		this.preferentialNumber = pNum;
 		this.tempPreference = tpNum;
 		this.processTime = pTime;

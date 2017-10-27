@@ -25,7 +25,7 @@ public class Main {
 	final static int SRNF = 1;
 
 	final static int LENGTH = 3;
-	final static int AGENT = 300;
+	final static int AGENT = 1000;
 
 	final static int deadlineUnder = 15;
 	final static int deadlineRange = 10;
@@ -39,12 +39,12 @@ public class Main {
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 3;
-	static int incliment = 10;
-	static int taskLoad = 10;
-	static int strategy = HRF;
+	static int Loop = 1;
+	static int incliment = 1;
+	static int taskLoad = 42;
+	static int strategy = RLEARN;
 	static int method = CPLEX;
-	static int Output = little;
+	static int Output = large;
 
 	public static void main(String[] args) {
 		System.out.println("開始");
@@ -67,7 +67,26 @@ public class Main {
 			System.exit(1);
 		}
 
-		for (int bias = 0; bias < 4; bias++) {
+		for (int bias = 1; bias < 2; bias++) {
+			if(Output == little)
+			switch(bias) {
+			case 0:
+				taskLoad = 64;
+				break;
+			case 1:
+				taskLoad = 42;
+				incliment = 5;
+				break;
+			case 2:
+				taskLoad = 22;
+				incliment = 6;
+				break;
+			case 3:
+				taskLoad = 34;
+				break;
+			default:
+				break;
+			}
 			double[] prob = other.bias(bias);
 
 			double[] IncSum = new double[incliment];
@@ -117,10 +136,10 @@ public class Main {
 					ArrayList<Bid> cand = new ArrayList<Bid>();
 					Bid item;
 					object.makeAgent(agent, agentType, random);
-					/*
-					 * for(Agent a : agent){ System.out.println(a.toString()); }
-					 * System.exit(1);;
-					 */
+
+				/*	 for(Agent a : agent){ System.out.println(a.toString()); }
+					  System.exit(1);;*/
+
 					while (time < SIMULATIONTIME) {
 						object.makeTask(task, other.poisson(taskload, random), random, prob);
 						for (int i = 0; i < task.size(); i++) {
@@ -338,6 +357,9 @@ public class Main {
 						agentBid.clear();
 						envyList.clear();
 						allocation.clear();
+						System.out.println(time);
+						if(drop > 0)
+							System.out.println(time + ", " +drop);
 						sum = drop = processTime = duration = 0;
 						time++;
 						if(time == 1000) {

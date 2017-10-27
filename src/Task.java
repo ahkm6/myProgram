@@ -10,6 +10,7 @@ public class Task {
 	int deadline;
 	int generateTime;
 	int allocated;
+	int originalDeadline;
 
 	public Task(int taskNum, int[] taskRes, int deadline, Random random) {
 		random.nextInt(100);
@@ -23,6 +24,7 @@ public class Task {
 		this.deadline = deadline;
 		this.generateTime = deadline;
 		this.allocated = 0;
+		this.originalDeadline = deadline;
 	}
 
 	public int taskNumber() {

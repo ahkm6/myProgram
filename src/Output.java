@@ -5,14 +5,14 @@ import java.io.PrintWriter;
 
 public class Output {
 
-	final static int slice = 1;
+	final static int slice = 10;
 
 	static int loop = Main.Loop;
 
 	public void changeRatio(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
-			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/Change100" + str
+			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/TAM" + str
 					+","+ age +","+ val+"," + rew+"," +met+ ".csv", true); // ※１
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			double[] Sum = new double[sum.length / slice];
@@ -64,7 +64,7 @@ public class Output {
 	public void taskLoad(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
-			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/little" + str
+			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/NewDepreciatory" + str
 					+","+ age +","+ val+"," + rew+"," +met+ ".csv", true); // ※１
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			if (Main.strategy < 4) {
@@ -75,6 +75,7 @@ public class Output {
 							+ pTime[i] / loop + "," + duration[i] / loop + "," + rate[i] / loop);
 				}
 			} else {
+				pw.println(bias);
 				pw.println(",reward,drop,pTime,duration,workRate,,EDF,HRF,SPTF,CEF");
 				for (int i = 0; i < sum.length; i++) {
 					pw.println(((i * 2) + Main.taskLoad) + "," + sum[i] / loop + "," + drop[i] / loop + ","

@@ -730,7 +730,7 @@ public class MakeObject {
 	public int[] normalTask(int length, Random random) {
 		int[] resource = new int[length];
 		for (int i = 0; i < length; i++) {
-			resource[i] = 30 + random.nextInt(21);
+			resource[i] = 30 + random.nextInt(31);
 		}
 		return resource;
 	}
@@ -739,9 +739,9 @@ public class MakeObject {
 		int[] resource = new int[length];
 		for (int i = 0; i < length; i++) {
 			if (i == number)
-				resource[i] = 50 + random.nextInt(21);
+				resource[i] = 70 + random.nextInt(21);
 			else
-				resource[i] = 20 + random.nextInt(21);
+				resource[i] = 10 + random.nextInt(21);
 		}
 		return resource;
 	}
