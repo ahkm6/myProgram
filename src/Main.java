@@ -34,17 +34,17 @@ public class Main {
 	final static int large = 1;
 	final static int no = 2;
 
-	static int SIMULATIONTIME = 3001;
+	static int SIMULATIONTIME = 30001;
 	static int Value = REWARD;
 	static int bidNumber = 5;
 	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
 	static int Loop = 1;
 	static int incliment = 1;
-	static int taskLoad = 42;
+	static int taskLoad = 44;
 	static int strategy = RLEARN;
 	static int method = CPLEX;
-	static int Output = large;
+	static int Output = little;
 
 	public static void main(String[] args) {
 		System.out.println("開始");
@@ -67,18 +67,18 @@ public class Main {
 			System.exit(1);
 		}
 
-		for (int bias = 1; bias < 2; bias++) {
+		for (int bias = 0; bias < 4; bias++) {
 			if(Output == little)
 			switch(bias) {
 			case 0:
 				taskLoad = 64;
 				break;
 			case 1:
-				taskLoad = 42;
+				taskLoad = 62;
 				incliment = 5;
 				break;
 			case 2:
-				taskLoad = 22;
+				taskLoad = 42;
 				incliment = 6;
 				break;
 			case 3:
@@ -95,12 +95,14 @@ public class Main {
 			double[] IncProcessTime = new double[incliment];
 			double[] IncDuration = new double[incliment];
 			double[][] IncQ = new double[incliment][4];
+			double[][] IncCalcTime = new double[incliment][2];
 
 			double[] largeSum = new double[SIMULATIONTIME];
 			double[] largeDrop = new double[SIMULATIONTIME];
 			double[] largeWorkRate = new double[SIMULATIONTIME];
 			double[] largeProcessTime = new double[SIMULATIONTIME];
 			double[] largeDuration = new double[SIMULATIONTIME];
+			double[][] largeCalcTime = new double[SIMULATIONTIME][2];
 			double[][] largeQ = new double[SIMULATIONTIME][4];
 
 			for (int inc = 0; inc < incliment; inc++) {
@@ -111,6 +113,7 @@ public class Main {
 				double[] loopProcessTime = new double[SIMULATIONTIME];
 				double[] loopDuration = new double[SIMULATIONTIME];
 				double[][] loopQ = new double[SIMULATIONTIME][4];
+				double[][] loopCalcTime = new double[SIMULATIONTIME][2];
 				for (int loop = 0; loop < Loop; loop++) {
 
 					ArrayList<Bid> KEEP = new ArrayList<Bid>();
@@ -118,6 +121,11 @@ public class Main {
 					double drop = 0;
 					double processTime = 0;
 					double duration = 0;
+					double calcTime = 0;
+					double allStart = 0;
+					double allEnd = 0;
+					double start = 0;
+					double end = 0;
 
 					int processedNumber = 0;
 
@@ -141,6 +149,7 @@ public class Main {
 					  System.exit(1);;*/
 
 					while (time < SIMULATIONTIME) {
+						allStart = System.nanoTime();
 						object.makeTask(task, other.poisson(taskload, random), random, prob);
 						for (int i = 0; i < task.size(); i++) {
 							bid.add(new ArrayList<Bid>());
@@ -154,6 +163,9 @@ public class Main {
 						}
 
 						// 割当開始
+						start = System.nanoTime();
+						// Some processing
+
 						if (method == CPLEX) {
 							try {
 								cplex.cplex(task, bid, agentBid, allocation);
@@ -279,7 +291,8 @@ public class Main {
 								}
 							}
 						}
-
+						end = System.nanoTime();
+						calcTime = start-end;
 
 						for (int i = 0; i < task.size(); i++) {
 							if (task.get(i).elapsedTime()) {
@@ -335,6 +348,8 @@ public class Main {
 							largeDrop[time] += drop;
 							largeProcessTime[time] += processTime / processedNumber;
 							largeDuration[time] += duration / processedNumber;
+							largeCalcTime[inc][0] += calcTime;
+							largeCalcTime[inc][1] += calcTime;
 						} else {
 							loopSum[time] = 0;
 							loopDrop[time] = drop;
@@ -345,6 +360,7 @@ public class Main {
 							loopProcessTime[time] = 0;
 							loopDuration[time] = 0;
 						}
+						loopCalcTime[time][0] = calcTime;
 
 						for (Agent a : agent) {
 							loopQ[time][a.agentStrategy()]++;
@@ -357,7 +373,7 @@ public class Main {
 						agentBid.clear();
 						envyList.clear();
 						allocation.clear();
-						System.out.println(time);
+					//	System.out.println(time);
 						if(drop > 0)
 							System.out.println(time + ", " +drop);
 						sum = drop = processTime = duration = 0;
@@ -365,12 +381,8 @@ public class Main {
 						if(time == 1000) {
 							System.out.println("1000");
 						}
-			//			System.out.println(task.size() + "," + busyAgent.size());
-						// if(time%100 == 0){
-						// System.out.println(loopQ[time-1][0]+","+loopQ[time-1][1]+","+loopQ[time-1][2]+","+loopQ[time-1][3]);
-						// System.out.printf("%d %d %.3f, %.3f, %.3f, %.3f,
-						// %3f",time,agent[3].status,agent[3].Q[0],agent[3].Q[1],agent[3].Q[2],agent[3].Q[3],agent[3].reward);
-						// System.out.println();
+						allEnd = System.nanoTime();
+						loopCalcTime[time][1] = allStart - allEnd;
 					}
 
 					if (Output == little) {
@@ -384,18 +396,20 @@ public class Main {
 							IncQ[inc][1] += loopQ[i][1] / 1000;
 							IncQ[inc][2] += loopQ[i][2] / 1000;
 							IncQ[inc][3] += loopQ[i][3] / 1000;
+							IncCalcTime[inc][0] += loopCalcTime[i][0]/1000;
+							IncCalcTime[inc][1] += loopCalcTime[i][1]/1000;
 						}
 					}
 					System.out.println(loop + "周目終わり");
 
 				}
 				if (Output == large)
-					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,
+					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,largeCalcTime,
 							bias, str,
 							age, val, rew,met);
 			}
 			if (Output == little)
-				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ, bias, str, age, val,
+				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ,IncCalcTime, bias, str, age, val,
 						rew,met);
 		}
 	}

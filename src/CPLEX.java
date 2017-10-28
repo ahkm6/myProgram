@@ -74,7 +74,7 @@ public class CPLEX {
 								for (int l = 0; l < box[0].length; l++) {
 									if (value[k][l] == 0 || l == j)
 										continue;
-									if (value[k][l] <= value[k][j]) {
+									if (value[k][l] < value[k][j]) {
 										high = cplex.sum(high, box[k][l]);
 									}
 								}

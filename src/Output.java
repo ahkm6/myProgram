@@ -9,10 +9,10 @@ public class Output {
 
 	static int loop = Main.Loop;
 
-	public void changeRatio(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,
+	public void changeRatio(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,double[][] calc,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
-			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/TAM" + str
+			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/HENKOU" + str
 					+","+ age +","+ val+"," + rew+"," +met+ ".csv", true); // ※１
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			double[] Sum = new double[sum.length / slice];
@@ -36,21 +36,20 @@ public class Output {
 			}
 			pw.println(bias);
 			if (Main.strategy < 4) {
-				pw.println(",reward,drop,pTime,duration,workRate");
+				pw.println(",reward,drop,pTime,duration,workRate,calc");
 				for (int i = 0; i < Sum.length; i++) {
 
 					pw.println(i * slice + "," + Sum[i] / loop + "," + Drop[i] / loop + "," + PTime[i] / loop + ","
-							+ Duration[i] / loop + "," + Rate[i] / loop);
+							+ Duration[i] / loop + "," + Rate[i] / loop+"," + calc[i][0] / loop + "," + calc[i][1]/loop);
 
 				}
 			} else {
-				pw.println(",reward,drop,pTime,duration,workRate,,EDF,HRF,SPTF,CEF");
+				pw.println(",reward,drop,pTime,duration,workRate,calc,,EDF,HRF,SPTF,CEF");
 				for (int i = 0; i < Sum.length; i++) {
 
 					pw.println(i * slice + "," + Sum[i] / loop + "," + Drop[i] / loop + "," + PTime[i] / loop + ","
-							+ Duration[i] / loop + "," + Rate[i] / loop + "," + i * slice + "," + Q[i][0] / Main.AGENT
-							+ "," + Q[i][1] / Main.AGENT + "," + Q[i][2] / Main.AGENT + "," + Q[i][3] / Main.AGENT
-							+ ",");
+							+ Duration[i] / loop + "," + Rate[i] / loop +"," + calc[i][0] / loop + "," + calc[i][1]/loop+ "," + i * slice + "," + Q[i][0] / (Main.AGENT *loop)
+							+ "," + Q[i][1] / (Main.AGENT*loop) + "," + Q[i][2] / (Main.AGENT*loop)+ "," + Q[i][3] / (Main.AGENT*loop)							+ ",");
 
 				}
 			}
@@ -61,7 +60,7 @@ public class Output {
 		}
 	}
 
-	public void taskLoad(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,
+	public void taskLoad(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][] q,double[][] calc,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
 			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/NewDepreciatory" + str
@@ -72,14 +71,14 @@ public class Output {
 				pw.println(",reward,drop,pTime,duration,workRate");
 				for (int i = 0; i < sum.length; i++) {
 					pw.println(((i * 2) + Main.taskLoad) + "," + sum[i] / loop + "," + drop[i] / loop + ","
-							+ pTime[i] / loop + "," + duration[i] / loop + "," + rate[i] / loop);
+							+ pTime[i] / loop + "," + duration[i] / loop + "," + rate[i] / loop +"," + calc[i][0] / loop + "," + calc[i][1]/loop);
 				}
 			} else {
 				pw.println(bias);
 				pw.println(",reward,drop,pTime,duration,workRate,,EDF,HRF,SPTF,CEF");
 				for (int i = 0; i < sum.length; i++) {
 					pw.println(((i * 2) + Main.taskLoad) + "," + sum[i] / loop + "," + drop[i] / loop + ","
-							+ pTime[i] / loop + "," + duration[i] / loop + "," + rate[i] / loop + ","
+							+ pTime[i] / loop + "," + duration[i] / loop + "," + rate[i] / loop+"," + calc[i][0] / loop + "," + calc[i][1]/loop + ","
 							+ ((i * 2) + Main.taskLoad) + "," + q[i][0] / Main.AGENT + "," + q[i][1] / Main.AGENT + ","
 							+ q[i][2] / Main.AGENT + "," + q[i][3] / Main.AGENT + ",");
 				}
