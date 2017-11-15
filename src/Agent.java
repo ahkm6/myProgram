@@ -65,4 +65,8 @@ public class Agent {
 		return this.agentNumber + "," + this.agentResource[0] + "," + this.agentResource[1] + ","
 				+ this.agentResource[2] + "," + this.agentStrategy;
 	}
+
+	public String Qvalue() {
+		return this.Q[0]+ "," + this.Q[1] + "," + this.Q[2] + "," + this.Q[3];
+	}
 }

@@ -11,6 +11,8 @@ public class Task {
 	int generateTime;
 	int allocated;
 	int originalDeadline;
+	int flag = 0;
+	static int slice = 0;
 
 	public Task(int taskNum, int[] taskRes, int deadline, Random random) {
 		random.nextInt(100);
@@ -25,6 +27,11 @@ public class Task {
 		this.generateTime = deadline;
 		this.allocated = 0;
 		this.originalDeadline = deadline;
+		if(random.nextInt(100) < slice)
+			this.flag = 1;
+	}
+	public Task() {
+		
 	}
 
 	public int taskNumber() {
@@ -66,7 +73,12 @@ public class Task {
 		else
 			return false;
 	}
-
+	public void slice() {
+		slice++;
+	}
+	public void reset() {
+		slice = 0;
+	}
 	public String toString() {
 		return this.taskNumber + "," + this.taskResource[0] + "," + this.taskResource[1] + "," + this.taskResource[2]
 				+ "," + this.reward + "," + this.deadline;

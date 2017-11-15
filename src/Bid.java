@@ -16,10 +16,12 @@ public class Bid {
 	public Bid(Task task, Agent agent, int rew, int pNum, int tpNum, int pTime) {
 		this.task = task;
 		this.agent = agent;
-		this.reward = rew;
-	/*	this.reward = (int) (task.reward() / 2 + task.reward()
-		* (task.deadline() - pTime)
-		/ (2 * task.originalDeadline));*/
+		if (task.flag == 0)
+			this.reward = rew;
+		else
+			this.reward = (int) (task.reward() / 2 + task.reward()
+					* (task.deadline() - pTime)
+					/ (2 * task.originalDeadline));
 		this.preferentialNumber = pNum;
 		this.tempPreference = tpNum;
 		this.processTime = pTime;
@@ -103,12 +105,12 @@ public class Bid {
 		this.tempPreference++;
 	}
 
-/*	public String toString() {
-		return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + preferentialNumber + ","
-				+ this.value;
+	/*	public String toString() {
+			return this.taskNumber() + "," + this.agentNumber() + "," + this.deadline() + "," + preferentialNumber + ","
+					+ this.value;
 
-	}*/
+		}*/
 	public String toString() {
-		return this.taskNumber() + "," + this.value() +  "," + this.preferentialNumber + "  ";
+		return this.taskNumber() + "," + this.value() + "," + this.preferentialNumber + "  ";
 	}
 }

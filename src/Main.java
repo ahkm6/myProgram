@@ -15,6 +15,7 @@ public class Main {
 	final static int RANDOM = 0;
 	final static int BIAS = 1;
 	final static int MIXED = 2;
+	final static int GOODBAD = 3;
 	// task
 	final static int TASK_REWARD = 0;
 	final static int TASK_RANDOM = 1;
@@ -25,26 +26,27 @@ public class Main {
 	final static int SRNF = 1;
 
 	final static int LENGTH = 3;
-	final static int AGENT = 1000;
+	final static int AGENT = 300;
 
 	final static int deadlineUnder = 15;
 	final static int deadlineRange = 10;
 
 	final static int little = 0;
 	final static int large = 1;
-	final static int no = 2;
+	final static int QVALUE = 2;
+	final static int no = 3;
 
-	static int SIMULATIONTIME = 30001;
-	static int Value = REWARD;
+	static int SIMULATIONTIME = 31001;
+	static int Value = PROCESSTIME;
 	static int bidNumber = 5;
-	static int agentType = RANDOM;
+	static int agentType = GOODBAD;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 1;
+	static int Loop = 2;
 	static int incliment = 1;
-	static int taskLoad = 44;
-	static int strategy = RLEARN;
-	static int method = CPLEX;
-	static int Output = little;
+	static int taskLoad = 26;
+	static int strategy = ELEARN;
+	static int method = SRNF;
+	static int Output = large;
 
 	public static void main(String[] args) {
 		System.out.println("開始");
@@ -55,6 +57,7 @@ public class Main {
 		Output output = new Output();
 		Learning learning = new Learning();
 		CPLEX cplex = new CPLEX();
+		Task TASK = new Task();
 
 		String str = other.PrintTactics(strategy);
 		String age = other.PrintAgent(agentType);
@@ -62,31 +65,37 @@ public class Main {
 		String rew = other.PrintReward(taskReward);
 		String met = other.PrintMethod(method);
 
+		int tempValue[] = new int[4];
+		int initialize[] = new int[4];
+
 		if (Output == large && incliment != 1) {
 			System.out.println("something is wrong");
 			System.exit(1);
 		}
 
-		for (int bias = 0; bias < 4; bias++) {
-			if(Output == little)
+
+		for (int bias = 0; bias < 2; bias++) {
+		/*	if(Output == little)
 			switch(bias) {
 			case 0:
-				taskLoad = 64;
+				taskLoad = 62;    //learn74
+				incliment = 10;
 				break;
 			case 1:
-				taskLoad = 62;
-				incliment = 5;
+				taskLoad = 62;    //learn82
+				incliment = 10;
 				break;
 			case 2:
-				taskLoad = 42;
-				incliment = 6;
+				taskLoad = 44;    //learn62
+				incliment = 10;
 				break;
 			case 3:
-				taskLoad = 34;
+				taskLoad = 34;    //learn52
+				incliment = 10;
 				break;
 			default:
 				break;
-			}
+			}*/
 			double[] prob = other.bias(bias);
 
 			double[] IncSum = new double[incliment];
@@ -104,6 +113,9 @@ public class Main {
 			double[] largeDuration = new double[SIMULATIONTIME];
 			double[][] largeCalcTime = new double[SIMULATIONTIME][2];
 			double[][] largeQ = new double[SIMULATIONTIME][4];
+			double[][][] agentQvalue = null;
+			ArrayList<Integer> agentQ = null;
+			ArrayList<Agent> AgentQ = null;
 
 			for (int inc = 0; inc < incliment; inc++) {
 				int taskload = taskLoad + inc * 2;
@@ -114,8 +126,8 @@ public class Main {
 				double[] loopDuration = new double[SIMULATIONTIME];
 				double[][] loopQ = new double[SIMULATIONTIME][4];
 				double[][] loopCalcTime = new double[SIMULATIONTIME][2];
-				for (int loop = 0; loop < Loop; loop++) {
 
+				for (int loop = 0; loop < Loop; loop++) {
 					ArrayList<Bid> KEEP = new ArrayList<Bid>();
 					double sum = 0;
 					double drop = 0;
@@ -143,10 +155,27 @@ public class Main {
 					ArrayList<Bid> allocation = new ArrayList<Bid>();
 					ArrayList<Bid> cand = new ArrayList<Bid>();
 					Bid item;
-					object.makeAgent(agent, agentType, random);
 
-				/*	 for(Agent a : agent){ System.out.println(a.toString()); }
-					  System.exit(1);;*/
+					object.makeAgent(agent, agentType, random);
+					if (Output == QVALUE) {
+						AgentQ = new ArrayList<Agent>();
+						agentQ = new ArrayList<Integer>();
+						for (Agent a : agent) {
+							if (a.agentResource[0] == 7 && a.agentResource[1] == 7 && a.agentResource[2] == 7) {
+								agentQ.add(a.agentNumber());
+								AgentQ.add(a);
+							}
+							if (a.agentResource[0] == 4 && a.agentResource[1] == 4 && a.agentResource[2] == 4) {
+								agentQ.add(a.agentNumber());
+								AgentQ.add(a);
+							}
+							if (a.agentResource[0] == 3 && a.agentResource[1] == 3 && a.agentResource[2] == 7) {
+								agentQ.add(a.agentNumber());
+								AgentQ.add(a);
+							}
+						}
+						agentQvalue = new double[agentQ.size()][SIMULATIONTIME][4];
+					}
 
 					while (time < SIMULATIONTIME) {
 						allStart = System.nanoTime();
@@ -292,7 +321,7 @@ public class Main {
 							}
 						}
 						end = System.nanoTime();
-						calcTime = start-end;
+						calcTime = end-start;
 
 						for (int i = 0; i < task.size(); i++) {
 							if (task.get(i).elapsedTime()) {
@@ -344,17 +373,7 @@ public class Main {
 							loopDrop[time] = drop;
 							loopProcessTime[time] = processTime / processedNumber;
 							loopDuration[time] = duration / processedNumber;
-							largeSum[time] += sum;
-							largeDrop[time] += drop;
-							largeProcessTime[time] += processTime / processedNumber;
-							largeDuration[time] += duration / processedNumber;
-							largeCalcTime[inc][0] += calcTime;
-							largeCalcTime[inc][1] += calcTime;
 						} else {
-							loopSum[time] = 0;
-							loopDrop[time] = drop;
-							loopProcessTime[time] = 0;
-							loopDuration[time] = 0;
 							loopSum[time] = 0;
 							loopDrop[time] = drop;
 							loopProcessTime[time] = 0;
@@ -362,9 +381,20 @@ public class Main {
 						}
 						loopCalcTime[time][0] = calcTime;
 
+						tempValue[0]=tempValue[1]=tempValue[2]=tempValue[3]=0;
+
 						for (Agent a : agent) {
-							loopQ[time][a.agentStrategy()]++;
-							largeQ[time][a.agentStrategy()]++;
+							tempValue[a.agentStrategy()]++;
+
+						}
+						for(int i = 0; i < 4; i++) {
+							loopQ[time][i] = tempValue[i];
+						}
+						if(Output == QVALUE) {
+							for(int i = 0; i < agentQ.size(); i++) {
+								for(int j = 0; j < 4; j++)
+									agentQvalue[i][time][j] = agent[agentQ.get(i)].Q[j];
+							}
 						}
 						loopWorkRate[time] = (double) busyAgent.size() / AGENT;
 						largeWorkRate[time] = (double) busyAgent.size() / AGENT;
@@ -374,17 +404,16 @@ public class Main {
 						envyList.clear();
 						allocation.clear();
 					//	System.out.println(time);
-						if(drop > 0)
-							System.out.println(time + ", " +drop);
-						sum = drop = processTime = duration = 0;
-						time++;
-						if(time == 1000) {
-							System.out.println("1000");
-						}
-						allEnd = System.nanoTime();
-						loopCalcTime[time][1] = allStart - allEnd;
-					}
 
+						sum = drop = processTime = duration = 0;
+						allEnd = System.nanoTime();
+						loopCalcTime[time][1] = allEnd - allStart;
+						time++;
+						if(time > 1000)
+							if((time-10000) % ((SIMULATIONTIME-1)/100) == 0 && Output == large) {
+								TASK.slice();
+						}
+					}
 					if (Output == little) {
 						for (int i = SIMULATIONTIME - 1; i > SIMULATIONTIME - 1001; i--) {
 							IncSum[inc] += loopSum[i] / 1000;
@@ -400,13 +429,32 @@ public class Main {
 							IncCalcTime[inc][1] += loopCalcTime[i][1]/1000;
 						}
 					}
+					if(Output == large) {
+						for(int i = 0; i < SIMULATIONTIME - 1; i++) {
+							largeSum[i] += loopSum[i];
+							largeDrop[i] += loopDrop[i];
+							largeProcessTime[i] += loopProcessTime[i];
+							largeDuration[i] += loopDuration[i];
+							largeCalcTime[i][0] += loopCalcTime[i][0];
+							largeCalcTime[i][1] += loopCalcTime[i][1];
+							largeQ[i][0] += loopQ[i][0];
+							largeQ[i][1] += loopQ[i][1];
+							largeQ[i][2] += loopQ[i][2];
+							largeQ[i][3] += loopQ[i][3];
+							if(i % 100 == 0)
+								System.out.println(largeSum[i]);
+						}
+					}
 					System.out.println(loop + "周目終わり");
-
+					TASK.reset();
 				}
 				if (Output == large)
 					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,largeCalcTime,
 							bias, str,
 							age, val, rew,met);
+				if(Output == QVALUE)
+					output.Qvalue(agentQvalue,agentQ,AgentQ,bias,str,age,val,rew,met);
+
 			}
 			if (Output == little)
 				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ,IncCalcTime, bias, str, age, val,

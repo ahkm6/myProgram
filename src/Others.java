@@ -121,8 +121,8 @@ public class Others{
 			System.out.println("MIXED");
 			break;
 		case 3:
-			S = "NORMAL";
-			System.out.println("NORMAL");
+			S = "GOODBAD";
+			System.out.println("GOODBAD");
 			break;
 		}
 		return S;

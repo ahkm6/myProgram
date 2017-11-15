@@ -14,6 +14,7 @@ public class MakeObject {
 	final int RANDOM = Main.RANDOM;
 	final int BIAS = Main.BIAS;
 	final int MIXED = Main.MIXED;
+	final int GOODBAD = Main.GOODBAD;
 	final int LENGTH = Main.LENGTH;
 
 	final static int REWARD = Main.REWARD;
@@ -686,6 +687,14 @@ public class MakeObject {
 				agent[i] = new Agent(i, biasAgent(LENGTH, random, random.nextInt(LENGTH)), random);
 			}
 			break;
+		case GOODBAD:
+			for (int i = 0; i < agent.length / 2; i++) {
+				agent[i] = new Agent(i, lowAgent(LENGTH, random), random);
+			}
+			for (int i = agent.length / 2; i < agent.length; i++) {
+				agent[i] = new Agent(i, highAgent(LENGTH, random), random);
+			}
+			break;
 		default:
 			System.out.println("something is wrong.");
 			System.exit(1);
@@ -739,9 +748,9 @@ public class MakeObject {
 		int[] resource = new int[length];
 		for (int i = 0; i < length; i++) {
 			if (i == number)
-				resource[i] = 70 + random.nextInt(21);
+				resource[i] = 70 + random.nextInt(31);
 			else
-				resource[i] = 10 + random.nextInt(21);
+				resource[i] = 20 + random.nextInt(21);
 		}
 		return resource;
 	}
