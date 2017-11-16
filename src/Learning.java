@@ -10,8 +10,8 @@ public class Learning {
 	final static int RLEARN = Main.RLEARN;
 	final static int LANDOM = Main.LANDOM;
 
-	double rate = 0.05;
-	double epsilon = 0.05;
+	double rate = 0.1;
+	double epsilon = 0.1;
 	double t = 50;
 	double slesh = 0.5;
 
@@ -19,6 +19,10 @@ public class Learning {
 
 	public void update(Agent age, double reward) {
 		age.Q[age.agentStrategy()] = (1 - rate) * age.Q[age.agentStrategy()] + rate * reward;
+	}
+	
+	public void update(Agent age, double reward, double agentReward) {
+		age.Q[age.agentStrategy()] = (1 - rate) * age.Q[age.agentStrategy()] + rate * (reward + agentReward);
 	}
 
 	public int greedy(Agent age, Random random) {

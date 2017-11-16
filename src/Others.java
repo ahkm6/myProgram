@@ -195,11 +195,16 @@ public class Others{
 		this.reward = this.reward / Bid.size();
 		this.match = this.match / Bid.size();
 		this.deadline = this.deadline / Bid.size();
-		this.pTimeStd = Math.sqrt(a-Math.pow(this.pTime,2));
-		this.rewardStd = Math.sqrt(b-Math.pow(this.reward,2));
-		this.matchStd = Math.sqrt(c-Math.pow(this.match,2));
-		this.deadlineStd = Math.sqrt(d-Math.pow(this.deadline,2));
+		this.pTimeStd = Math.sqrt(a-Math.pow(this.pTime,2))/Bid.size();
+		this.rewardStd = Math.sqrt(b-Math.pow(this.reward,2))/Bid.size();
+		this.matchStd = Math.sqrt(c-Math.pow(this.match,2))/Bid.size();
+		this.deadlineStd = Math.sqrt(d-Math.pow(this.deadline,2))/Bid.size();
 	}
+	
+	public void stdout() {
+		System.out.println(pTimeStd+", "+rewardStd+", " +matchStd +", "+deadlineStd);
+	}
+	
 	public double bias(Bid bid){
 		double result = 0;
 		switch(bid.agent().agentStrategy()){

@@ -35,17 +35,22 @@ public class Main {
 	final static int large = 1;
 	final static int QVALUE = 2;
 	final static int no = 3;
+	
+	final static int ON = 0;
+	final static int OFF = 1;
 
-	static int SIMULATIONTIME = 31001;
-	static int Value = PROCESSTIME;
+	static int Switch = OFF;
+	static int penalty = -1;
+	static int SIMULATIONTIME = 310001;
+	static int Value = REWARD;
 	static int bidNumber = 5;
 	static int agentType = GOODBAD;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 2;
+	static int Loop = 5;
 	static int incliment = 1;
-	static int taskLoad = 26;
+	static int taskLoad = 25;
 	static int strategy = ELEARN;
-	static int method = SRNF;
+	static int method = CPLEX;
 	static int Output = large;
 
 	public static void main(String[] args) {
@@ -65,8 +70,7 @@ public class Main {
 		String rew = other.PrintReward(taskReward);
 		String met = other.PrintMethod(method);
 
-		int tempValue[] = new int[4];
-		int initialize[] = new int[4];
+		int tempValue[][] = new int[4][2];
 
 		if (Output == large && incliment != 1) {
 			System.out.println("something is wrong");
@@ -74,7 +78,7 @@ public class Main {
 		}
 
 
-		for (int bias = 0; bias < 2; bias++) {
+		for (int bias = 0; bias < 1; bias++) {
 		/*	if(Output == little)
 			switch(bias) {
 			case 0:
@@ -103,7 +107,7 @@ public class Main {
 			double[] IncWorkRate = new double[incliment];
 			double[] IncProcessTime = new double[incliment];
 			double[] IncDuration = new double[incliment];
-			double[][] IncQ = new double[incliment][4];
+			double[][][] IncQ = new double[incliment][4][2];
 			double[][] IncCalcTime = new double[incliment][2];
 
 			double[] largeSum = new double[SIMULATIONTIME];
@@ -112,7 +116,7 @@ public class Main {
 			double[] largeProcessTime = new double[SIMULATIONTIME];
 			double[] largeDuration = new double[SIMULATIONTIME];
 			double[][] largeCalcTime = new double[SIMULATIONTIME][2];
-			double[][] largeQ = new double[SIMULATIONTIME][4];
+			double[][][] largeQ = new double[SIMULATIONTIME][4][2];
 			double[][][] agentQvalue = null;
 			ArrayList<Integer> agentQ = null;
 			ArrayList<Agent> AgentQ = null;
@@ -124,7 +128,7 @@ public class Main {
 				double[] loopWorkRate = new double[SIMULATIONTIME];
 				double[] loopProcessTime = new double[SIMULATIONTIME];
 				double[] loopDuration = new double[SIMULATIONTIME];
-				double[][] loopQ = new double[SIMULATIONTIME][4];
+				double[][][] loopQ = new double[SIMULATIONTIME][4][2];
 				double[][] loopCalcTime = new double[SIMULATIONTIME][2];
 
 				for (int loop = 0; loop < Loop; loop++) {
@@ -161,15 +165,15 @@ public class Main {
 						AgentQ = new ArrayList<Agent>();
 						agentQ = new ArrayList<Integer>();
 						for (Agent a : agent) {
-							if (a.agentResource[0] == 7 && a.agentResource[1] == 7 && a.agentResource[2] == 7) {
+							if (a.agentResource[0] == 2 && a.agentResource[1] == 2 && a.agentResource[2] == 2) {
+								agentQ.add(a.agentNumber());
+								AgentQ.add(a);
+							}
+							if (a.agentResource[0] == 3 && a.agentResource[1] ==3 && a.agentResource[2] == 3) {
 								agentQ.add(a.agentNumber());
 								AgentQ.add(a);
 							}
 							if (a.agentResource[0] == 4 && a.agentResource[1] == 4 && a.agentResource[2] == 4) {
-								agentQ.add(a.agentNumber());
-								AgentQ.add(a);
-							}
-							if (a.agentResource[0] == 3 && a.agentResource[1] == 3 && a.agentResource[2] == 7) {
 								agentQ.add(a.agentNumber());
 								AgentQ.add(a);
 							}
@@ -333,7 +337,11 @@ public class Main {
 						for (int i = 0; i < busyAgent.size(); i++) {
 							if (busyAgent.get(i).elapsedTime()) {
 								if (strategy == ELEARN || strategy == RLEARN) {
-									learning.update(busyAgent.get(i), busyAgent.get(i).reward());
+									if(Switch == ON) {
+										learning.update(busyAgent.get(i), busyAgent.get(i).reward(),busyAgent.get(i).QValue());
+									}else {
+										learning.update(busyAgent.get(i), busyAgent.get(i).reward());
+									}
 									learning.greedy(busyAgent.get(i), random);
 								}
 								busyAgent.remove(i);
@@ -342,7 +350,7 @@ public class Main {
 						}
 						if (strategy == ELEARN)
 							for (ArrayList<Bid> b : agentBid) {
-								learning.update(b.get(0).agent(), -1);
+								learning.update(b.get(0).agent(), penalty);
 								learning.greedy(b.get(0).agent(), random);
 							}
 						else if (strategy == RLEARN)
@@ -357,9 +365,14 @@ public class Main {
 						other.calculate(KEEP);
 						for (Bid b : allocation) {
 
-							if (strategy == ELEARN)
+							if (strategy == ELEARN) {
 								b.agent().reward(other.bias(b));
-							else if (strategy == RLEARN)
+								if(Switch == ON) {
+									b.agent().addUtility(b.reward());
+									b.agent().calc();
+									b.agent().bias(b.reward());
+								}
+							}else if (strategy == RLEARN)
 								b.agent().reward(b.reward());
 							sum += b.reward();
 							processTime += b.processTime();
@@ -381,14 +394,17 @@ public class Main {
 						}
 						loopCalcTime[time][0] = calcTime;
 
-						tempValue[0]=tempValue[1]=tempValue[2]=tempValue[3]=0;
-
+						tempValue[0][0]=tempValue[1][0]=tempValue[2][0]=tempValue[3][0]=0;
+						tempValue[0][1]=tempValue[1][1]=tempValue[2][1]=tempValue[3][1]=0;
 						for (Agent a : agent) {
-							tempValue[a.agentStrategy()]++;
-
+							if(a.sum() > 12)
+								tempValue[a.agentStrategy()][0]++;
+							else
+								tempValue[a.agentStrategy()][1]++;
 						}
 						for(int i = 0; i < 4; i++) {
-							loopQ[time][i] = tempValue[i];
+							loopQ[time][i][0] = tempValue[i][0];
+							loopQ[time][i][1] = tempValue[i][1];
 						}
 						if(Output == QVALUE) {
 							for(int i = 0; i < agentQ.size(); i++) {
@@ -410,8 +426,9 @@ public class Main {
 						loopCalcTime[time][1] = allEnd - allStart;
 						time++;
 						if(time > 1000)
-							if((time-10000) % ((SIMULATIONTIME-1)/100) == 0 && Output == large) {
+							if((time-10000) % ((SIMULATIONTIME-1)/100) == 0 && (Output == large || Output == QVALUE)) {
 								TASK.slice();
+						//		other.stdout();
 						}
 					}
 					if (Output == little) {
@@ -421,10 +438,14 @@ public class Main {
 							IncProcessTime[inc] += loopProcessTime[i] / 1000;
 							IncDuration[inc] += loopDuration[i] / 1000;
 							IncWorkRate[inc] += loopWorkRate[i] / 1000;
-							IncQ[inc][0] += loopQ[i][0] / 1000;
-							IncQ[inc][1] += loopQ[i][1] / 1000;
-							IncQ[inc][2] += loopQ[i][2] / 1000;
-							IncQ[inc][3] += loopQ[i][3] / 1000;
+							IncQ[inc][0][0] += loopQ[i][0][0] / 1000;
+							IncQ[inc][1][0] += loopQ[i][1][0] / 1000;
+							IncQ[inc][2][0] += loopQ[i][2][0] / 1000;
+							IncQ[inc][3][0] += loopQ[i][3][0] / 1000;
+							IncQ[inc][0][1] += loopQ[i][0][1] / 1000;
+							IncQ[inc][1][1] += loopQ[i][1][1] / 1000;
+							IncQ[inc][2][1] += loopQ[i][2][1] / 1000;
+							IncQ[inc][3][1] += loopQ[i][3][1] / 1000;
 							IncCalcTime[inc][0] += loopCalcTime[i][0]/1000;
 							IncCalcTime[inc][1] += loopCalcTime[i][1]/1000;
 						}
@@ -437,14 +458,19 @@ public class Main {
 							largeDuration[i] += loopDuration[i];
 							largeCalcTime[i][0] += loopCalcTime[i][0];
 							largeCalcTime[i][1] += loopCalcTime[i][1];
-							largeQ[i][0] += loopQ[i][0];
-							largeQ[i][1] += loopQ[i][1];
-							largeQ[i][2] += loopQ[i][2];
-							largeQ[i][3] += loopQ[i][3];
+							largeQ[i][0][0] += loopQ[i][0][0];
+							largeQ[i][1][0] += loopQ[i][1][0];
+							largeQ[i][2][0] += loopQ[i][2][0];
+							largeQ[i][3][0] += loopQ[i][3][0];
+							largeQ[i][0][1] += loopQ[i][0][1];
+							largeQ[i][1][1] += loopQ[i][1][1];
+							largeQ[i][2][1] += loopQ[i][2][1];
+							largeQ[i][3][1] += loopQ[i][3][1];
 							if(i % 100 == 0)
 								System.out.println(largeSum[i]);
 						}
 					}
+
 					System.out.println(loop + "周目終わり");
 					TASK.reset();
 				}
