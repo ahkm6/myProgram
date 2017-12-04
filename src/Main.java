@@ -35,23 +35,23 @@ public class Main {
 	final static int large = 1;
 	final static int QVALUE = 2;
 	final static int no = 3;
-	
+
 	final static int ON = 0;
 	final static int OFF = 1;
 
 	static int Switch = OFF;
-	static int penalty = -1;
-	static int SIMULATIONTIME = 310001;
+	static int penalty = -5;
+	static int SIMULATIONTIME = 30001;
 	static int Value = REWARD;
 	static int bidNumber = 5;
-	static int agentType = GOODBAD;
+	static int agentType = RANDOM;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 5;
-	static int incliment = 1;
-	static int taskLoad = 25;
+	static int Loop = 20;
+	static int incliment = 13;
+	static int taskLoad = 8;
 	static int strategy = ELEARN;
-	static int method = CPLEX;
-	static int Output = large;
+	static int method = SRNF;
+	static int Output = little;
 
 	public static void main(String[] args) {
 		System.out.println("開始");
@@ -77,25 +77,25 @@ public class Main {
 			System.exit(1);
 		}
 
-
-		for (int bias = 0; bias < 1; bias++) {
+for(int z = 0; z < 3; z++) {
+		for (int bias = 0; bias < 4; bias++) {
 		/*	if(Output == little)
 			switch(bias) {
 			case 0:
 				taskLoad = 62;    //learn74
-				incliment = 10;
+				incliment = 8;
 				break;
 			case 1:
 				taskLoad = 62;    //learn82
-				incliment = 10;
+				incliment = 8;
 				break;
 			case 2:
 				taskLoad = 44;    //learn62
-				incliment = 10;
+				incliment = 8;
 				break;
 			case 3:
 				taskLoad = 34;    //learn52
-				incliment = 10;
+				incliment = 8;
 				break;
 			default:
 				break;
@@ -161,6 +161,7 @@ public class Main {
 					Bid item;
 
 					object.makeAgent(agent, agentType, random);
+
 					if (Output == QVALUE) {
 						AgentQ = new ArrayList<Agent>();
 						agentQ = new ArrayList<Integer>();
@@ -426,7 +427,7 @@ public class Main {
 						loopCalcTime[time][1] = allEnd - allStart;
 						time++;
 						if(time > 1000)
-							if((time-10000) % ((SIMULATIONTIME-1)/100) == 0 && (Output == large || Output == QVALUE)) {
+							if((time-50000) % ((SIMULATIONTIME-1)/100) == 0 && (Output == large || Output == QVALUE)) {
 								TASK.slice();
 						//		other.stdout();
 						}
@@ -485,6 +486,8 @@ public class Main {
 			if (Output == little)
 				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ,IncCalcTime, bias, str, age, val,
 						rew,met);
+		}
+		Task.slice(50);
 		}
 	}
 }

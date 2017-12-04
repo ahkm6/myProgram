@@ -76,6 +76,9 @@ public class Task {
 	public void slice() {
 		slice++;
 	}
+	public static void slice(int n) {
+		slice += n;
+	}
 	public void reset() {
 		slice = 0;
 	}

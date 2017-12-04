@@ -17,7 +17,7 @@ public class Output {
 	public void changeRatio(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][][] q,double[][] calc,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
-			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/25-1jawsCPLEX" + str
+			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/25JAWS" + str
 					+","+ age +","+ val+"," + rew+"," +met+ ".csv", true); // ※１
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			double[] Sum = new double[sum.length / slice];
@@ -46,7 +46,7 @@ public class Output {
 				}
 			}
 			pw.println(bias);
-			if (Main.strategy < 4) {
+			if (Main.strategy < 3) {
 				pw.println(",reward,drop,pTime,duration,workRate,calc,CALC");
 				for (int i = 0; i < Sum.length; i++) {
 
@@ -74,7 +74,7 @@ public class Output {
 	public void taskLoad(double[] sum, double[] drop, double[] pTime, double[] duration, double[] rate, double[][][] q,double[][] calc,
 			int bias, String str, String age, String val, String rew, String met) {
 		try {
-			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/zurui0" + str
+			FileWriter fw = new FileWriter("//Users/n.iijima/Box Sync/菅原研SharedBox/2014_Iijima/実験データ保存用/300agent" + Task.slice + str
 					+","+ age +","+ val+"," + rew+"," +met+ ".csv", true); // ※１
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 			if (Main.strategy < 4) {

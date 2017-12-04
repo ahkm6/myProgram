@@ -16,12 +16,7 @@ public class Bid {
 	public Bid(Task task, Agent agent, int rew, int pNum, int tpNum, int pTime) {
 		this.task = task;
 		this.agent = agent;
-		if (task.flag == 0)
-			this.reward = rew;
-		else
-			this.reward = (int) (task.reward() / 2 + task.reward()
-					* (task.deadline() - pTime)
-					/ (2 * task.originalDeadline));
+		this.reward = rew;
 		this.preferentialNumber = pNum;
 		this.tempPreference = tpNum;
 		this.processTime = pTime;
