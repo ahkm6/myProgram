@@ -31,7 +31,7 @@ public class Task {
 			this.flag = 1;
 	}
 	public Task() {
-		
+
 	}
 
 	public int taskNumber() {

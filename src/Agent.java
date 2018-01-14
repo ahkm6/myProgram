@@ -15,6 +15,7 @@ public class Agent {
 	int status;
 	double reward;
 	static int strategy = Main.strategy;
+	Bid bid;
 
 	public Agent(int agentNum, int[] agentRec, Random random) {
 		this.agentNumber = agentNum;
@@ -55,7 +56,12 @@ public class Agent {
 		if(counter == utilityValue.length)
 			counter = 0;
 	}
-	
+	public Bid getBid() {
+		return this.bid;
+	}
+	public void addBid(Bid bid) {
+		this.bid = bid;
+	}
 	public void calc() {
 		int t = 0;
 		int s = 0;
@@ -66,11 +72,11 @@ public class Agent {
 		this.utility = t/utilityValue.length;
 		this.stdUtility = Math.sqrt(s-Math.pow(this.utility,2))/utilityValue.length;
 	}
-	
+
 	public void bias(int rew) {
 		this.Qvalue = (rew - this.utility)/stdUtility;
 	}
-	
+
 	public void busy(int n) {
 		this.status = n;
 	}

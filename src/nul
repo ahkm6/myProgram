@@ -1,18 +1,18 @@
 Tried aggregator 1 time.
-MIP Presolve eliminated 275 rows and 1464 columns.
-MIP Presolve modified 83 coefficients.
-Reduced MIP has 116 rows, 135 columns, and 689 nonzeros.
-Reduced MIP has 135 binaries, 0 generals, 0 SOSs, and 0 indicators.
+MIP Presolve eliminated 364 rows and 1422 columns.
+MIP Presolve modified 112 coefficients.
+Reduced MIP has 406 rows, 300 columns, and 7264 nonzeros.
+Reduced MIP has 300 binaries, 0 generals, 0 SOSs, and 0 indicators.
 Probing time =    0.00 sec.
 Tried aggregator 1 time.
-MIP Presolve eliminated 21 rows and 12 columns.
-MIP Presolve modified 6 coefficients.
-Reduced MIP has 95 rows, 123 columns, and 561 nonzeros.
-Reduced MIP has 123 binaries, 0 generals, 0 SOSs, and 0 indicators.
-Presolve time =    0.00 sec.
-Found feasible solution after 0.00 sec.  Objective = 303.0000
+MIP Presolve eliminated 116 rows and 38 columns.
+MIP Presolve modified 41 coefficients.
+Reduced MIP has 290 rows, 262 columns, and 5133 nonzeros.
+Reduced MIP has 262 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time =    0.03 sec.
+Found feasible solution after 0.03 sec.  Objective = 3.0000
 Probing time =    0.00 sec.
-Clique table members: 94.
+Clique table members: 291.
 MIP emphasis: balance optimality and feasibility.
 MIP search method: dynamic search.
 Parallel mode: deterministic, using up to 8 threads.
@@ -21,10 +21,10 @@ Root relaxation solution time =    0.00 sec.
         Nodes                                         Cuts/
    Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
 
-*     0+    0                          303.0000                     46     --- 
-*     0+    0                         2409.0000                     46     --- 
-*     0     0      integral     0     2566.0000     2566.0000       46    0.00%
-Elapsed real time =   0.00 sec. (tree size =  0.00 MB, solutions = 3)
+*     0+    0                            3.0000                     73     --- 
+*     0+    0                          127.0000                     73     --- 
+*     0     0      integral     0      132.0000      132.0000       73    0.00%
+Elapsed real time =   0.04 sec. (tree size =  0.00 MB, solutions = 3)
 
 Root node processing (before b&c):
   Real time             =    0.00

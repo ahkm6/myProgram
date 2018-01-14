@@ -41,17 +41,17 @@ public class Main {
 
 	static int Switch = OFF;
 	static int penalty = -5;
-	static int SIMULATIONTIME = 30001;
-	static int Value = REWARD;
+	static int SIMULATIONTIME = 310001;
+	static int Value = PROCESSTIME;
 	static int bidNumber = 5;
-	static int agentType = RANDOM;
+	static int agentType = GOODBAD;
 	static int taskReward = TASK_REWARD;
-	static int Loop = 20;
-	static int incliment = 13;
-	static int taskLoad = 8;
-	static int strategy = ELEARN;
+	static int Loop = 3;
+	static int incliment = 1;
+	static int taskLoad = 25;
+	static int strategy = RLEARN;
 	static int method = SRNF;
-	static int Output = little;
+	static int Output = large;
 
 	public static void main(String[] args) {
 		System.out.println("開始");
@@ -76,9 +76,11 @@ public class Main {
 			System.out.println("something is wrong");
 			System.exit(1);
 		}
-
-for(int z = 0; z < 3; z++) {
-		for (int bias = 0; bias < 4; bias++) {
+for(int numbers = 0; numbers < 1; numbers++){
+//	Task.slice(numbers);
+		for (int bias = 0; bias < 2; bias++) {
+			if(bias == 1)
+				taskLoad = 20;
 		/*	if(Output == little)
 			switch(bias) {
 			case 0:
@@ -103,6 +105,7 @@ for(int z = 0; z < 3; z++) {
 			double[] prob = other.bias(bias);
 
 			double[] IncSum = new double[incliment];
+			double[] IncValue = new double[incliment];
 			double[] IncDrop = new double[incliment];
 			double[] IncWorkRate = new double[incliment];
 			double[] IncProcessTime = new double[incliment];
@@ -111,6 +114,7 @@ for(int z = 0; z < 3; z++) {
 			double[][] IncCalcTime = new double[incliment][2];
 
 			double[] largeSum = new double[SIMULATIONTIME];
+			double[] largeValue = new double[SIMULATIONTIME];
 			double[] largeDrop = new double[SIMULATIONTIME];
 			double[] largeWorkRate = new double[SIMULATIONTIME];
 			double[] largeProcessTime = new double[SIMULATIONTIME];
@@ -124,6 +128,7 @@ for(int z = 0; z < 3; z++) {
 			for (int inc = 0; inc < incliment; inc++) {
 				int taskload = taskLoad + inc * 2;
 				double[] loopSum = new double[SIMULATIONTIME];
+				double[] loopValue = new double[SIMULATIONTIME];
 				double[] loopDrop = new double[SIMULATIONTIME];
 				double[] loopWorkRate = new double[SIMULATIONTIME];
 				double[] loopProcessTime = new double[SIMULATIONTIME];
@@ -132,8 +137,10 @@ for(int z = 0; z < 3; z++) {
 				double[][] loopCalcTime = new double[SIMULATIONTIME][2];
 
 				for (int loop = 0; loop < Loop; loop++) {
+					System.out.println(Task.slice);
 					ArrayList<Bid> KEEP = new ArrayList<Bid>();
 					double sum = 0;
+					double value = 0;
 					double drop = 0;
 					double processTime = 0;
 					double duration = 0;
@@ -337,6 +344,11 @@ for(int z = 0; z < 3; z++) {
 						}
 						for (int i = 0; i < busyAgent.size(); i++) {
 							if (busyAgent.get(i).elapsedTime()) {
+								sum += busyAgent.get(i).getBid().reward();
+								value += busyAgent.get(i).getBid().value();
+								processTime += busyAgent.get(i).getBid().processTime();
+								duration += busyAgent.get(i).getBid().duration();
+
 								if (strategy == ELEARN || strategy == RLEARN) {
 									if(Switch == ON) {
 										learning.update(busyAgent.get(i), busyAgent.get(i).reward(),busyAgent.get(i).QValue());
@@ -374,21 +386,21 @@ for(int z = 0; z < 3; z++) {
 									b.agent().bias(b.reward());
 								}
 							}else if (strategy == RLEARN)
-								b.agent().reward(b.reward());
-							sum += b.reward();
-							processTime += b.processTime();
-							duration += b.duration();
+								b.agent().reward(b.value());
+							b.agent().addBid(b);
 							agent[b.agentNumber()].busy(b.processTime());
 							busyAgent.add(b.agent());
 						}
 						processedNumber = allocation.size();
 						if (processedNumber != 0) {
 							loopSum[time] = sum;
+							loopValue[time] = value;
 							loopDrop[time] = drop;
 							loopProcessTime[time] = processTime / processedNumber;
 							loopDuration[time] = duration / processedNumber;
 						} else {
 							loopSum[time] = 0;
+							loopValue[time] = 0;
 							loopDrop[time] = drop;
 							loopProcessTime[time] = 0;
 							loopDuration[time] = 0;
@@ -422,7 +434,7 @@ for(int z = 0; z < 3; z++) {
 						allocation.clear();
 					//	System.out.println(time);
 
-						sum = drop = processTime = duration = 0;
+						sum = drop = processTime = duration = value = 0;
 						allEnd = System.nanoTime();
 						loopCalcTime[time][1] = allEnd - allStart;
 						time++;
@@ -435,6 +447,7 @@ for(int z = 0; z < 3; z++) {
 					if (Output == little) {
 						for (int i = SIMULATIONTIME - 1; i > SIMULATIONTIME - 1001; i--) {
 							IncSum[inc] += loopSum[i] / 1000;
+							IncValue[inc] += loopValue[i] / 1000;
 							IncDrop[inc] += loopDrop[i] / 1000;
 							IncProcessTime[inc] += loopProcessTime[i] / 1000;
 							IncDuration[inc] += loopDuration[i] / 1000;
@@ -454,6 +467,7 @@ for(int z = 0; z < 3; z++) {
 					if(Output == large) {
 						for(int i = 0; i < SIMULATIONTIME - 1; i++) {
 							largeSum[i] += loopSum[i];
+							largeValue[i] += loopValue[i];
 							largeDrop[i] += loopDrop[i];
 							largeProcessTime[i] += loopProcessTime[i];
 							largeDuration[i] += loopDuration[i];
@@ -473,10 +487,11 @@ for(int z = 0; z < 3; z++) {
 					}
 
 					System.out.println(loop + "周目終わり");
+					if(Output == large)
 					TASK.reset();
 				}
 				if (Output == large)
-					output.changeRatio(largeSum, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,largeCalcTime,
+					output.changeRatio(largeSum,largeValue, largeDrop, largeProcessTime, largeDuration, largeWorkRate, largeQ,largeCalcTime,
 							bias, str,
 							age, val, rew,met);
 				if(Output == QVALUE)
@@ -484,10 +499,10 @@ for(int z = 0; z < 3; z++) {
 
 			}
 			if (Output == little)
-				output.taskLoad(IncSum, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ,IncCalcTime, bias, str, age, val,
+				output.taskLoad(IncSum,IncValue, IncDrop, IncProcessTime, IncDuration, IncWorkRate, IncQ,IncCalcTime, bias, str, age, val,
 						rew,met);
 		}
-		Task.slice(50);
-		}
+
+	}
 	}
 }

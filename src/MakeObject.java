@@ -42,9 +42,9 @@ public class MakeObject {
 					int maxmin[] = calculate(agent[i].resource(), t.resource());
 					int reward;
 					if(t.flag == 1) {
-						reward = (int) (t.reward() / 2 + t.reward()
+						reward = (int) (t.reward()
 						* (t.deadline() - maxmin[0])
-						/ (2 * t.originalDeadline));
+						/ (t.originalDeadline));
 					}
 					else
 						reward = t.reward;

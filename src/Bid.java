@@ -22,8 +22,10 @@ public class Bid {
 		this.processTime = pTime;
 		if (Value == REWARD)
 			this.value = rew;
-		else if (Value == PROCESSTIME)
-			this.value = -pTime;
+		else if (Value == PROCESSTIME) {
+			//this.value = -pTime;
+			this.value = rew / pTime;
+		}
 		this.allocated = 0;
 		this.duration = pTime + (task.generateTime() - task.deadline());
 	}

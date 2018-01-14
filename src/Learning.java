@@ -20,7 +20,7 @@ public class Learning {
 	public void update(Agent age, double reward) {
 		age.Q[age.agentStrategy()] = (1 - rate) * age.Q[age.agentStrategy()] + rate * reward;
 	}
-	
+
 	public void update(Agent age, double reward, double agentReward) {
 		age.Q[age.agentStrategy()] = (1 - rate) * age.Q[age.agentStrategy()] + rate * (reward + agentReward);
 	}
